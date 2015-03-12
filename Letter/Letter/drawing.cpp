@@ -9,7 +9,7 @@ double Common_Round(double num)	{
 }
 
 
-void SDLCust_SetRenderDrawLine(SDL_Renderer *Renderer, int X1, int Y1, int X2, int Y2)	{
+void SDLCust_RenderDrawLine(SDL_Renderer *Renderer, int X1, int Y1, int X2, int Y2)	{
 	SDL_SetRenderDrawColor(Renderer, 0xFF, 0x00, 0xFF, 0xFF);
 	float diffX = X2 - X1;
 	float diffY = Y2 - Y1;

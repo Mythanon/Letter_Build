@@ -8,7 +8,7 @@
 #include <iostream>
 #include <string>
 
-#include "drawing.h"
+#include "main.h"
 
 SDL_Window *sdlWindow;
 SDL_Renderer *sdlRenderer;
@@ -91,7 +91,7 @@ int main( int argc, char* argv[])	{
 
 			SDL_RenderClear(sdlRenderer);
 			SDL_SetRenderDrawColor(sdlRenderer, 0xFF, 0x00, 0xFF, 0xFF);
-			SDLCust_SetRenderDrawLine(sdlRenderer, 32, 72, 700, 400);
+			SDLCust_RenderDrawLine(sdlRenderer, 32, 72, 700, 400);
 			SDL_SetRenderDrawColor(sdlRenderer, 0x00, 0x00, 0x00, 0xFF);
 			SDL_RenderPresent(sdlRenderer);
 
