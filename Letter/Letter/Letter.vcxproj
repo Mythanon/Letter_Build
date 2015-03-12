@@ -39,7 +39,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Work\C# Binaries\SDL2-2.0.3\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\include\SDL\;$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -68,6 +68,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="drawing.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
@@ -75,11 +76,12 @@
     <ResourceCompile Include="Letter.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="drawing.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="..\..\..\C# Binaries\SDL2-2.0.3\lib\x86\SDL2.lib" />
-    <Library Include="..\..\..\C# Binaries\SDL2-2.0.3\lib\x86\SDL2main.lib" />
+    <Library Include="..\lib\SDL2.lib" />
+    <Library Include="..\lib\SDL2main.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

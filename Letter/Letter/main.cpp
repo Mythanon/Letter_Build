@@ -5,9 +5,10 @@
 
 #include "SDL.h"
 #include "SDL_opengl.h"
-//#include "SDL_image.h"
 #include <iostream>
 #include <string>
+
+#include "drawing.h"
 
 SDL_Window *sdlWindow;
 SDL_Renderer *sdlRenderer;
@@ -89,13 +90,8 @@ int main( int argc, char* argv[])	{
 
 
 			SDL_RenderClear(sdlRenderer);
-			SDL_SetRenderDrawColor(sdlRenderer, 0x00, 0x00, 0x00, 0xFF);
 			SDL_SetRenderDrawColor(sdlRenderer, 0xFF, 0x00, 0xFF, 0xFF);
-			SDL_RenderDrawPoint(sdlRenderer, 400, 300);
-			SDL_RenderDrawPoint(sdlRenderer, 401, 300);
-			SDL_RenderDrawPoint(sdlRenderer, 402, 300);
-			SDL_RenderDrawPoint(sdlRenderer, 403, 300);
-			SDL_RenderDrawPoint(sdlRenderer, 404, 300);
+			SDLCust_SetRenderDrawLine(sdlRenderer, 32, 72, 700, 400);
 			SDL_SetRenderDrawColor(sdlRenderer, 0x00, 0x00, 0x00, 0xFF);
 			SDL_RenderPresent(sdlRenderer);
 
