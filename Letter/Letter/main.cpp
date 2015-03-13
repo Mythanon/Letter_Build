@@ -52,7 +52,7 @@ int main( int argc, char* argv[])	{
 	SDL_RenderPresent(sdlRenderer);
 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");  // make the scaled rendering look smoother.
-	SDL_RenderSetLogicalSize(sdlRenderer, 1920, 1200);
+	//SDL_RenderSetLogicalSize(sdlRenderer, 1920, 1200);
 
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 
@@ -69,7 +69,7 @@ int main( int argc, char* argv[])	{
 			SDL_RenderClear(sdlRenderer);
 			SDL_SetRenderDrawColor(sdlRenderer, 0xFF, 0x00, 0xFF, 0xFF);
 			SDLCust test = SDLCust();
-			test.RenderDrawLine(sdlRenderer, 4.3, 2.7, 12.8, 11.4);
+			test.RenderDrawLine(sdlRenderer, 55, 1, 22, 32);
 			SDL_SetRenderDrawColor(sdlRenderer, 0x00, 0x00, 0x00, 0xFF);
 			SDL_RenderPresent(sdlRenderer);
 

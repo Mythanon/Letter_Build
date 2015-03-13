@@ -1,55 +1,49 @@
 
 #include "drawing.h";
 
+
 //COMMON FUNCTIONS --TODO, MOVE TO COMMON FUNC.CPP
 double Common_Round(double num)	{
 	return (num > 0.0) ? floor(num + 0.5) : ceil(num - 0.5);
 }
 
 
-
+//BUG #1 : for loops inside miss all pixels in between pixel intersections when theres more than 2 pixels to be drawn and X2>X1 or Y2>Y1 (backwards drawn lines)
+//This bug happens because we are incrementing cX++ and cY++ instead of +dX, this also means we have to change the cX/cY to >= then x - 1, which complicates it further, is it even possible with 1 loop? 
 void SDLCust::RenderDrawLine(SDL_Renderer *Renderer, float X1, float Y1, float X2, float Y2)	{
-	SDL_SetRenderDrawColor(Renderer, 0xFF, 0x00, 0xFF, 0xFF);
-	float dX = X2 - X1;
-	float dY = Y2 - Y1;
-	float rX = dX / dY;
-	float rY = dY / dX;
-
-	bool firstPixelFlag = true;
-	for (float x = X1, y = Y1; x <= X2, y <= Y2; x += rX, y += rY)	{
-		int oldX = (int)floor(x - rX);
-		int newX = (int)floor(x);
-		int oldY = (int)floor(y - rY);
-		int newY = (int)floor(y);
-		if (firstPixelFlag == false)	{
-			if (newX != oldX)	{
-				float aY = (((newX - X1) * rX) + ((y - Y1) * rY));
-				std::cout << "X-intersect: " << newX << ", Y: " << ((newX) * rX) << "\n";
-
-				SDL_RenderDrawPoint(Renderer, oldX, newY);
-				SDL_RenderDrawPoint(Renderer, newX, newY);
-			}
-
-			if (newY != oldY)	{
-				std::cout << "Y: " << newY << "\n";
-				SDL_RenderDrawPoint(Renderer, oldX, oldY);
-				SDL_RenderDrawPoint(Renderer, oldX, newY);
-			}
+	int dX = (X1 < X2) ? 1 : -1;
+	int dY = (Y1 < Y2) ? 1 : -1;
+	float r = (X2 - X1) / (Y2 - Y1);
+	for (int x = ceil(X1), oX = floor(X1); x <= floor(X2); x += dX, oX += dX)	{
+		for (int cX = oX + 1; cX <= x + 1; cX ++)	{
+			SDL_RenderDrawPoint(Renderer, cX, ceil((1 / r) * (x - X1) + Y1));
 		}
-		firstPixelFlag = false;
 	}
-
-	
-	/*float diffX = X2 - X1;
-	float diffY = Y2 - Y1;
-	float ratioX = diffX / diffY;
-	float ratioY = diffY / diffX;
-	int amountOfPixels = (diffX + diffY) / 2;
-
-	for (int i = 0; i < amountOfPixels; i++)	{
-		int x = (int)Common_Round(X1 + (i * ratioX));
-		int y = (int)Common_Round(Y1 + (i * ratioY));
-		SDL_RenderDrawPoint(Renderer, x, y);
-	}*/
-
+	for (int y = ceil(Y1), oY = floor(Y1); y <= floor(Y2); y += dY, oY += dY)	{
+		for (int cY = oY + 1; cY <= y + 1; cY ++)	{
+			SDL_RenderDrawPoint(Renderer, ceil(r * (y - Y1) + X1), cY);
+		}
+	}
 }
+//HERE IS THE CLEAN READABLE VERSION OF @MYTHANON DRAW LINE FUNCTION, COMPLETE
+//
+//void SDLCust::RenderDrawLine(SDL_Renderer *Renderer, float X1, float Y1, float X2, float Y2)	{
+//	float dX = X2 - X1;
+//	float dY = Y2 - Y1;
+//	float rX = dX / dY;
+//	float rY = dY / dX;
+//	int oX = floor(X1), oY = floor(Y1);
+//	for (int x = ceil(X1), y = ceil(Y1); x <= ceil(X2), y <= ceil(Y2); x++, y++)	{
+//		float aY = ceil(rY * (x - X1) + Y1);
+//		float aX = ceil(rX * (y - Y1) + X1);
+//		for (int cX = oX + 1; cX <= x + 1; cX ++)	{
+//			SDL_RenderDrawPoint(Renderer, cX, aY);
+//		}
+//		for (int cY = oY + 1; cY <= y + 1; cY ++)	{
+//			SDL_RenderDrawPoint(Renderer, aX, cY);
+//		}
+//		oX = x;
+//		oY = y;
+//	}
+//	
+//}
