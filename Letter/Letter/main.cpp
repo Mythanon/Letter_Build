@@ -2,13 +2,8 @@
 
 //DEFAULT INCLUDES
 
+#include "main.h";
 
-#include "SDL.h"
-#include "SDL_opengl.h"
-#include <iostream>
-#include <string>
-
-#include "main.h"
 
 SDL_Window *sdlWindow;
 SDL_Renderer *sdlRenderer;
@@ -71,6 +66,12 @@ int main( int argc, char* argv[])	{
  
 	//For handling with event
 	SDL_Event event;
+			SDL_RenderClear(sdlRenderer);
+			SDL_SetRenderDrawColor(sdlRenderer, 0xFF, 0x00, 0xFF, 0xFF);
+			SDLCust test = SDLCust();
+			test.RenderDrawLine(sdlRenderer, 4.3, 2.7, 12.8, 11.4);
+			SDL_SetRenderDrawColor(sdlRenderer, 0x00, 0x00, 0x00, 0xFF);
+			SDL_RenderPresent(sdlRenderer);
 
 	while(isRunning == true)	{
 		 while ( SDL_PollEvent(&event) )	{
@@ -89,17 +90,10 @@ int main( int argc, char* argv[])	{
 
 
 
-			SDL_RenderClear(sdlRenderer);
-			SDL_SetRenderDrawColor(sdlRenderer, 0xFF, 0x00, 0xFF, 0xFF);
-			SDLCust_RenderDrawLine(sdlRenderer, 32, 72, 700, 400);
-			SDL_SetRenderDrawColor(sdlRenderer, 0x00, 0x00, 0x00, 0xFF);
-			SDL_RenderPresent(sdlRenderer);
-
 //			SDL_GL_SwapWindow(sdlWindow); //Swap to new frame
 		 }
 		SDL_Delay(1);
 	}
-
 	return 0;
 }
 

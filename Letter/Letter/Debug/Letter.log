@@ -1,27 +1,18 @@
-﻿Build started 12/03/2015 6:15:00 PM.
+﻿Build started 12/03/2015 8:02:30 PM.
      1>Project "C:\Github\Letter_Build\Letter_Build\Letter\Letter\Letter.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt drawing.cpp main.cpp
-         main.cpp
-     1>c:\github\letter_build\letter_build\letter\letter\drawing.cpp(14): warning C4244: 'initializing' : conversion from 'int' to 'float', possible loss of data
-     1>c:\github\letter_build\letter_build\letter\letter\drawing.cpp(15): warning C4244: 'initializing' : conversion from 'int' to 'float', possible loss of data
-     1>c:\github\letter_build\letter_build\letter\letter\drawing.cpp(18): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt drawing.cpp
          drawing.cpp
-     1>c:\github\letter_build\letter_build\letter\letter\drawing.cpp(14): warning C4244: 'initializing' : conversion from 'int' to 'float', possible loss of data
-     1>c:\github\letter_build\letter_build\letter\letter\drawing.cpp(15): warning C4244: 'initializing' : conversion from 'int' to 'float', possible loss of data
-     1>c:\github\letter_build\letter_build\letter\letter\drawing.cpp(18): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
-         Generating Code...
+     1>c:\github\letter_build\letter_build\letter\letter\drawing.cpp(2): warning C4067: unexpected tokens following preprocessor directive - expected a newline
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Github\Letter_Build\Letter_Build\Letter\Debug\Letter.exe" /INCREMENTAL /NOLOGO opengl32.lib glu32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Github\Letter_Build\Letter_Build\Letter\Debug\Letter.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Github\Letter_Build\Letter_Build\Letter\Debug\Letter.lib" /MACHINE:X86 Debug\Letter.res
          Debug\drawing.obj
          Debug\main.obj
          ..\lib\SDL2.lib
          ..\lib\SDL2main.lib
-     1>main.obj : error LNK2005: "double __cdecl Common_Round(double)" (?Common_Round@@YANN@Z) already defined in drawing.obj
-     1>main.obj : error LNK2005: "void __cdecl SDLCust_RenderDrawLine(struct SDL_Renderer *,int,int,int,int)" (?SDLCust_RenderDrawLine@@YAXPAUSDL_Renderer@@HHHH@Z) already defined in drawing.obj
-     1>C:\Github\Letter_Build\Letter_Build\Letter\Debug\Letter.exe : fatal error LNK1169: one or more multiply defined symbols found
-     1>Done Building Project "C:\Github\Letter_Build\Letter_Build\Letter\Letter\Letter.vcxproj" (Build target(s)) -- FAILED.
+         Letter.vcxproj -> C:\Github\Letter_Build\Letter_Build\Letter\Debug\Letter.exe
+     1>Done Building Project "C:\Github\Letter_Build\Letter_Build\Letter\Letter\Letter.vcxproj" (Build target(s)).
 
-Build FAILED.
+Build succeeded.
 
-Time Elapsed 00:00:01.66
+Time Elapsed 00:00:01.06
