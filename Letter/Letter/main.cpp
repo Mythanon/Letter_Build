@@ -66,12 +66,16 @@ int main( int argc, char* argv[])	{
  
 	//For handling with event
 	SDL_Event event;
-			SDL_RenderClear(sdlRenderer);
-			SDL_SetRenderDrawColor(sdlRenderer, 0xFF, 0x00, 0xFF, 0xFF);
-			SDLCust test = SDLCust();
-			test.RenderDrawLine(sdlRenderer, 22, 32, 55, 1);
-			SDL_SetRenderDrawColor(sdlRenderer, 0x00, 0x00, 0x00, 0xFF);
-			SDL_RenderPresent(sdlRenderer);
+	SDL_RenderClear(sdlRenderer);
+	SDL_SetRenderDrawColor(sdlRenderer, 0xFF, 0x00, 0xFF, 0xFF);
+	SDLCust test = SDLCust();
+	test.RenderDrawLine(sdlRenderer, 200.5, 100, 200.5, 980);
+	for (int y = 100; y <= 980; y += 40)	{
+		test.RenderDrawLine(sdlRenderer, 200.5, y, 1245.5, y);
+	}
+	test.RenderDrawLine(sdlRenderer, 1245.5, 100, 1245.5, 980);
+	SDL_SetRenderDrawColor(sdlRenderer, 0x00, 0x00, 0x00, 0xFF);
+	SDL_RenderPresent(sdlRenderer);
 
 	while(isRunning == true)	{
 		 while ( SDL_PollEvent(&event) )	{

@@ -41,6 +41,20 @@ local.properties
 *.user
 *.sln.docstates
 
+
+
+#ADD CUSTOM ENTRIES HERE
+
+*.log
+*.tlog
+
+
+
+#END CUSTOM ENTRIES HERE
+
+
+
+
 # Build results
 
 [Dd]ebug/
