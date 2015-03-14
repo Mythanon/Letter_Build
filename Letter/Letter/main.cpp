@@ -69,11 +69,15 @@ int main( int argc, char* argv[])	{
 	SDL_RenderClear(sdlRenderer);
 	SDL_SetRenderDrawColor(sdlRenderer, 0xFF, 0x00, 0xFF, 0xFF);
 	SDLCust test = SDLCust();
-	test.RenderDrawLine(sdlRenderer, 200.5, 100, 200.5, 980);
-	for (int y = 100; y <= 980; y += 40)	{
-		test.RenderDrawLine(sdlRenderer, 200.5, y, 1245.5, y);
+	
+	test.RenderDrawLine(sdlRenderer, 200, 100, 200, 940);
+	test.RenderDrawCircle(sdlRenderer, 220, 120, 15);
+	test.RenderDrawCircle(sdlRenderer, 220, 520, 15);
+	test.RenderDrawCircle(sdlRenderer, 220, 920, 15);
+	for (int y = 100; y <= 940; y += 40)	{
+		test.RenderDrawLine(sdlRenderer, 200, y, 1245, y);
 	}
-	test.RenderDrawLine(sdlRenderer, 1245.5, 100, 1245.5, 980);
+	test.RenderDrawLine(sdlRenderer, 1245, 100, 1245, 940);
 	SDL_SetRenderDrawColor(sdlRenderer, 0x00, 0x00, 0x00, 0xFF);
 	SDL_RenderPresent(sdlRenderer);
 

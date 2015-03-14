@@ -12,7 +12,7 @@ class SDLCust{
 
 public:	
 	void RenderDrawLine(SDL_Renderer *Renderer, float X1, float Y1, float X2, float Y2);
-
+	void RenderDrawCircle(SDL_Renderer *Renderer, float X, float Y, float R);
 };
 
 
