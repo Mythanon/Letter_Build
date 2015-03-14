@@ -69,7 +69,7 @@ int main( int argc, char* argv[])	{
 			SDL_RenderClear(sdlRenderer);
 			SDL_SetRenderDrawColor(sdlRenderer, 0xFF, 0x00, 0xFF, 0xFF);
 			SDLCust test = SDLCust();
-			test.RenderDrawLine(sdlRenderer, 55, 1, 22, 32);
+			test.RenderDrawLine(sdlRenderer, 22, 32, 55, 1);
 			SDL_SetRenderDrawColor(sdlRenderer, 0x00, 0x00, 0x00, 0xFF);
 			SDL_RenderPresent(sdlRenderer);
 
