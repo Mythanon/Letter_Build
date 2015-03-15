@@ -1,10 +1,10 @@
-﻿Build started 14/03/2015 2:14:10 PM.
+﻿Build started 15/03/2015 1:17:03 PM.
      1>Project "C:\Github\Letter_Build\Letter_Build\Letter\Letter\Letter.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
          main.cpp
      1>c:\github\letter_build\letter_build\letter\letter\main.cpp(5): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-     1>c:\github\letter_build\letter_build\letter\letter\main.cpp(78): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+     1>c:\github\letter_build\letter_build\letter\letter\main.cpp(85): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Github\Letter_Build\Letter_Build\Letter\Debug\Letter.exe" /INCREMENTAL /NOLOGO opengl32.lib glu32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Github\Letter_Build\Letter_Build\Letter\Debug\Letter.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Github\Letter_Build\Letter_Build\Letter\Debug\Letter.lib" /MACHINE:X86 Debug\Letter.res
          Debug\drawing.obj
@@ -16,4 +16,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.06
+Time Elapsed 00:00:01.10

@@ -63,44 +63,73 @@ int main( int argc, char* argv[])	{
 
 	//Handles the main loop
 	bool isRunning = true;
+	SYSTEMTIME t;
  
 	//For handling with event
 	SDL_Event event;
 	SDL_RenderClear(sdlRenderer);
+    GetSystemTime(&t); // or GetLocalTime(&t)
+    printf("The system time is: %02d:%02d:%02d.%03d\n", 
+        t.wHour, t.wMinute, t.wSecond, t.wMilliseconds);
 	SDL_SetRenderDrawColor(sdlRenderer, 0xFF, 0x00, 0xFF, 0xFF);
 	SDLCust test = SDLCust();
 	
-	test.RenderDrawLine(sdlRenderer, 200, 100, 200, 940);
-	test.RenderDrawCircle(sdlRenderer, 220, 120, 15);
-	test.RenderDrawCircle(sdlRenderer, 220, 520, 15);
-	test.RenderDrawCircle(sdlRenderer, 220, 920, 15);
-	for (int y = 100; y <= 940; y += 40)	{
-		test.RenderDrawLine(sdlRenderer, 200, y, 1245, y);
+	SDLCust::RenderSprite Sprite = SDLCust::RenderSprite(sdlRenderer, 200, 100);
+	Sprite.SetColor(0xFF, 0x00, 0xFF, 0xFF);
+	Sprite.DrawLine(0, 0, 0, 840);
+	Sprite.DrawLine(1200, 0, 1200, 840);
+	Sprite.DrawCircle(20, 20, 15);
+	Sprite.DrawCircle(20, 420, 15);
+	Sprite.DrawCircle(20, 820, 15);
+	for (int y = 0; y <= 840; y += 40)	{
+		Sprite.DrawLine(0, y, 1200, y);
 	}
-	test.RenderDrawLine(sdlRenderer, 1245, 100, 1245, 940);
+	Sprite.Update();
+	//Sprite.ToScreen();
 	SDL_SetRenderDrawColor(sdlRenderer, 0x00, 0x00, 0x00, 0xFF);
+	GetSystemTime(&t); // or GetLocalTime(&t)
+    printf("The system time is: %02d:%02d:%02d.%03d\n", 
+        t.wHour, t.wMinute, t.wSecond, t.wMilliseconds);
 	SDL_RenderPresent(sdlRenderer);
-
+	int lastM = t.wMilliseconds;
+	int xVol = 0;
+	int yVol = 0;
 	while(isRunning == true)	{
+		SDL_RenderClear(sdlRenderer);
 		 while ( SDL_PollEvent(&event) )	{
 			if (event.type == SDL_QUIT)	{
 				isRunning = false;
+			}else if (event.type == SDL_KEYDOWN)	{
+				if (event.key.keysym.sym == SDLK_LEFT)	{
+					xVol = -5;
+				}else if (event.key.keysym.sym == SDLK_RIGHT)	{
+					xVol = 5;
+				}else if (event.key.keysym.sym == SDLK_UP)	{
+					yVol = -5;
+				}else if (event.key.keysym.sym == SDLK_DOWN)	{
+					yVol = 5;
+				}
+			}else if (event.type == SDL_KEYUP)	{
+				if (event.key.keysym.sym == SDLK_LEFT || event.key.keysym.sym == SDLK_RIGHT)	{
+					xVol = 0;
+				}else if (event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_DOWN)	{
+					yVol = 0;
+				}
 			}
 			// SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
 			//             "Missing file",
 			//             "File is missing. Please reinstall the program.",
 			//            NULL);
-			
 
-
-			//Draw the page...
-
-
-
-
-//			SDL_GL_SwapWindow(sdlWindow); //Swap to new frame
 		 }
-		SDL_Delay(1);
+		Sprite.Move(Sprite.X + xVol, Sprite.Y + yVol);
+		SDL_SetRenderDrawColor(sdlRenderer, 0xFF, 0x00, 0xFF, 0xFF);
+		Sprite.Update();
+		SDL_SetRenderDrawColor(sdlRenderer, 0x00, 0x00, 0x00, 0xFF);
+		SDL_RenderPresent(sdlRenderer);
+		GetSystemTime(&t); // or GetLocalTime(&t)
+		std::cout << 1000 / (t.wMilliseconds - lastM) << "\n";
+		lastM = t.wMilliseconds;
 	}
 	return 0;
 }
