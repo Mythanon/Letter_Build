@@ -57,9 +57,9 @@ void SDLCust::RenderSprite::Move(float XPos, float YPos)	{
 void SDLCust::RenderSprite::Update()	{
 	float sX, sY;
 	for (int i = 0; i < Sheet.size(); i++)	{
-		for (int pI = 0; pI < Sheet[i].p.size(); pI ++)	{
+		SDL_SetRenderDrawColor(Renderer, Sheet[i].R, Sheet[i].G, Sheet[i].B, Sheet[i].A);
+			for (int pI = 0; pI < Sheet[i].p.size(); pI ++)	{
 			//p[std::make_pair(Sheet[i].p[pI].first + Sheet[i].X, Sheet[i].p[pI].second + Sheet[i].Y)] = i;
-			SDL_SetRenderDrawColor(Renderer, Sheet[i].R, Sheet[i].G, Sheet[i].B, Sheet[i].A);
 			SDL_RenderDrawPoint(Renderer, Sheet[i].p[pI].first + Sheet[i].X + X, Sheet[i].p[pI].second + Sheet[i].Y + Y);
 		}
 	}
