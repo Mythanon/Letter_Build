@@ -1,113 +1,131 @@
-
-
-//DEFAULT INCLUDES
-
 #include "main.h";
 
 
-SDL_Window *sdlWindow;
-SDL_Renderer *sdlRenderer;
+SDL_Window *sdlWindow = NULL;
+SDL_Renderer *sdlRenderer = NULL;
 
-void draw_page()	{
-	SDL_SetRenderDrawColor(sdlRenderer, 0xFF, 0x00, 0xFF, 0xFF);
-	//SDL_RenderDrawPoint(sdlRenderer, 400, 300);
-	//SDL_RenderDrawPoint(sdlRenderer, 401, 300);
-	//SDL_RenderDrawPoint(sdlRenderer, 402, 300);
-	//SDL_RenderDrawPoint(sdlRenderer, 403, 300);
-	//SDL_RenderDrawPoint(sdlRenderer, 404, 300);
+Drawing::Sprite Sprite;
+Drawing::GLTexture Coin;
+Drawing::GLSL ColorProgram;
+float time;
+void DrawGame()	{
+	glClearDepth(1.0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	ColorProgram.use();
+
+	Sprite.Update();
+
+	ColorProgram.unuse();
+	SDL_GL_SwapWindow(sdlWindow);
 }
 
 
 
+int main( int argc, char* argv[])	{		//INITIAL FUNCTION CALL ON LOAD
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3); // Set Version To __
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2); // __ Version 3.2
+	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1); //We would like to double buffer!
+	SDL_Init(SDL_INIT_EVERYTHING); //Initialize SDL
 
 
+	sdlWindow = SDL_CreateWindow("Test Game", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1024, 768, SDL_WINDOW_OPENGL);// | SDL_WINDOW_FULLSCREEN_DESKTOP); //Init window
+	if (sdlWindow == NULL)
+		FatalError("Error 1: The window failed to initialize!");
 
+	SDL_GLContext glContext = SDL_GL_CreateContext(sdlWindow); //Create the GL context
+	if (glContext == nullptr)
+		FatalError("Error 2: Failed to create open-gl context!");
 
+	GLenum error = glewInit(); //This helps with windows hardware helpers.
+	if (error != GLEW_OK)	{
+		std::cout << "Glew not okay! " << error;
+		FatalError("Error 3: Could not initialize Glew!");
+	}
 
-
-int main( int argc, char* argv[])	{
-	//initialize SDL
-	SDL_Init(SDL_INIT_EVERYTHING);
-  
+	glClearColor(0, 0, 0, 1); //Set background color to black for now. This will remain after every buffer change!
+	//glFrontFace(GL_CCW);
+	  
 	//Set OpenGL memory usage
-	SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 8 );
+	/*SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 8 );
 	SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE, 8);
 	SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE, 8 );
 	SDL_GL_SetAttribute( SDL_GL_ALPHA_SIZE, 8);
 	SDL_GL_SetAttribute( SDL_GL_BUFFER_SIZE, 32);
-	SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 16 );
-	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
-
-	//Init window
-	SDL_CreateWindowAndRenderer(0, 0, SDL_WINDOW_FULLSCREEN_DESKTOP, &sdlWindow, &sdlRenderer);
+	SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 16 );*/
 
 
-	SDL_SetRenderDrawColor(sdlRenderer, 0, 0, 0, 255);
-	SDL_RenderClear(sdlRenderer);
-	//SDL_RenderCopy(sdlRenderer, sdlTexture, NULL, NULL); In the case we want to draw the screen using a texture (c# bitmap)
+	//SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");  //Make scaled rendering look better
 
+	SDL_Event event; //Event handler, contains info about mouse/keyboard input etc.
 
+	
 
-
-	SDL_RenderPresent(sdlRenderer);
-
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");  // make the scaled rendering look smoother.
+	//Set the computed screen resolution (What the program sees)
 	//SDL_RenderSetLogicalSize(sdlRenderer, 1920, 1200);
 
-	SDL_SetRelativeMouseMode(SDL_TRUE);
+	//Allow the mouse cursor #Fails...
+	//SDL_SetRelativeMouseMode(SDL_TRUE);
 
- 
- 
-	std::cout << "OpenGL is running\n";
-	std::cout << "Main loop has started\n";
 
-	//Handles the main loop
-	bool isRunning = true;
-	SYSTEMTIME t;
- 
-	//For handling with event
-	SDL_Event event;
-	SDL_RenderClear(sdlRenderer);
-    GetSystemTime(&t); // or GetLocalTime(&t)
-    printf("The system time is: %02d:%02d:%02d.%03d\n", 
-        t.wHour, t.wMinute, t.wSecond, t.wMilliseconds);
-	SDL_SetRenderDrawColor(sdlRenderer, 0xFF, 0x00, 0xFF, 0xFF);
-	SDLCust test = SDLCust();
+	//DECLARE ANY TEMP VARIABLES HERE FOR DEBUG PURPOSES ~##################################################
+	SYSTEMTIME t;	GetSystemTime(&t);
+	std::cout << "SDL and OpenGL started at (" << t.wHour << ":" << t.wMinute << ":" << t.wSecond << ":" << t.wMilliseconds << ")" << std::endl;
+
 	
-	SDLCust::RenderSprite Sprite = SDLCust::RenderSprite(sdlRenderer, 200, 100);
-	Sprite.SetColor(0xFF, 0x00, 0xFF, 0xFF);
-	Sprite.DrawLine(0, 0, 0, 840);
-	Sprite.DrawLine(1200, 0, 1200, 840);
-	Sprite.DrawCircle(20, 20, 15);
-	Sprite.DrawCircle(20, 420, 15);
-	Sprite.DrawCircle(20, 820, 15);
-	for (int y = 0; y <= 840; y += 40)	{
-		Sprite.DrawLine(0, y, 1200, y);
-	}
-	Sprite.Update();
-	//Sprite.ToScreen();
-	SDL_SetRenderDrawColor(sdlRenderer, 0x00, 0x00, 0x00, 0xFF);
-	GetSystemTime(&t); // or GetLocalTime(&t)
-    printf("The system time is: %02d:%02d:%02d.%03d\n", 
-        t.wHour, t.wMinute, t.wSecond, t.wMilliseconds);
-	SDL_RenderPresent(sdlRenderer);
+
+	//START THE GAME LOOP
+	bool isRunning = true;
+
+	ColorProgram.compileShaders("Shader/colorShading.vert", "Shader/colorShading.frag");
+	ColorProgram.addAttribute("vertexPosition");
+	ColorProgram.addAttribute("vertexColor");
+	ColorProgram.addAttribute("vertexUV");
+	ColorProgram.linkShaders();
+	ColorProgram.loadUniformLocations();
+
+
 	int lastM = t.wMilliseconds;
-	int xVol = 0;
-	int yVol = 0;
+	float xVol = 0;
+	float yVol = 0;
+	Sprite = Drawing::Sprite(ColorProgram, -1, -1);
+	Sprite.SetColor(Color (255, 255, 255));
+	Sprite.AddLine(Position (0, 0), Position (1, 1), Color(233, 233, 0));
+	Sprite.AddLine(Position (0.2, 0.5), Position (0.3, 0.6), Color(233, 233, 0), Color(0, 233, 255));
+	Sprite.AddTriangle(Position (0.4, 0.1), Position (0.7, 0.1), Position (0.5, 0.5), Color(255, 0, 255));
+	Sprite.AddRect(Position (-1, 1.2), Position (1.4, -1), Color(233, 233, 0));
+
+	
+	Coin = Drawing::ImageLoader::loadPNG("Textures/test.png");
+	Sprite.AddTexture(Position (0.1, 0.1), Position (1.9, 1.9), Coin);
+	//ImageLoader::l
+
+	time = 0.0f;
+
+
+
+
+
 	while(isRunning == true)	{
-		SDL_RenderClear(sdlRenderer);
+
 		 while ( SDL_PollEvent(&event) )	{
 			if (event.type == SDL_QUIT)	{
 				isRunning = false;
 			}else if (event.type == SDL_KEYDOWN)	{
 				if (event.key.keysym.sym == SDLK_LEFT)	{
-					xVol = -5;
+					xVol = -0.005;
 				}else if (event.key.keysym.sym == SDLK_RIGHT)	{
-					xVol = 5;
+					xVol = 0.005;
 				}else if (event.key.keysym.sym == SDLK_UP)	{
-					yVol = -5;
+					yVol = 0.005;
 				}else if (event.key.keysym.sym == SDLK_DOWN)	{
-					yVol = 5;
+					yVol = -0.005;
+				}else if (event.key.keysym.sym == SDLK_0)	{
+					Sprite.SetScale(Sprite.Scale - 0.02);
+					Sprite.Update();
+				}else if (event.key.keysym.sym == SDLK_1)	{
+					Sprite.SetScale(Sprite.Scale + 0.02);
+					Sprite.Update();
 				}
 			}else if (event.type == SDL_KEYUP)	{
 				if (event.key.keysym.sym == SDLK_LEFT || event.key.keysym.sym == SDLK_RIGHT)	{
@@ -122,15 +140,13 @@ int main( int argc, char* argv[])	{
 			//            NULL);
 
 		 }
-		Sprite.Move(Sprite.X + xVol, Sprite.Y + yVol);
-		SDL_SetRenderDrawColor(sdlRenderer, 0xFF, 0x00, 0xFF, 0xFF);
-		Sprite.Update();
-		SDL_SetRenderDrawColor(sdlRenderer, 0x00, 0x00, 0x00, 0xFF);
-		SDL_RenderPresent(sdlRenderer);
-		GetSystemTime(&t); // or GetLocalTime(&t)
-		std::cout << 1000 / (t.wMilliseconds - lastM) << "\n";
-		lastM = t.wMilliseconds;
+		Sprite.MoveTo(Sprite.X + xVol, Sprite.Y + yVol);
+		time += 0.01f;
+		DrawGame();
+		
+		SDL_Delay(2);
 	}
+
 	return 0;
 }
 
