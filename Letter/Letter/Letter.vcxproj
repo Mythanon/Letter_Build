@@ -68,27 +68,35 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="drawing.h" />
+    <ClInclude Include="sprite.h" />
     <ClInclude Include="errorHandler.h" />
+    <ClInclude Include="game.h" />
+    <ClInclude Include="global.h" />
+    <ClInclude Include="GLSL.h" />
     <ClInclude Include="IOManager.h" />
     <ClInclude Include="main.h" />
-    <ClInclude Include="picoPNG.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="resourceManager.h" />
+    <ClInclude Include="soil\SOIL.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Letter.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="drawing.cpp" />
+    <ClCompile Include="sprite.cpp" />
     <ClCompile Include="errorHandler.cpp" />
+    <ClCompile Include="game.cpp" />
+    <ClCompile Include="global.cpp" />
+    <ClCompile Include="GLSL.cpp" />
     <ClCompile Include="IOManager.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="picoPNG.cpp" />
+    <ClCompile Include="resourceManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\lib\glew32.lib" />
     <Library Include="..\lib\SDL2.lib" />
     <Library Include="..\lib\SDL2main.lib" />
+    <Library Include="..\lib\SOIL.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

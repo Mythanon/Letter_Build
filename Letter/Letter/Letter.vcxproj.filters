@@ -21,16 +21,28 @@
     <ClInclude Include="main.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="drawing.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="errorHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IOManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="picoPNG.h">
+    <ClInclude Include="soil\SOIL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="global.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GLSL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resourceManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sprite.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -43,16 +55,25 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="drawing.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="errorHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="IOManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="picoPNG.cpp">
+    <ClCompile Include="game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GLSL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="global.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="resourceManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sprite.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -60,5 +81,6 @@
     <Library Include="..\lib\SDL2.lib" />
     <Library Include="..\lib\SDL2main.lib" />
     <Library Include="..\lib\glew32.lib" />
+    <Library Include="..\lib\SOIL.lib" />
   </ItemGroup>
 </Project>

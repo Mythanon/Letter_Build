@@ -1,12 +1,39 @@
 #pragma once
-#include <Windows.h>
-#include <SDL.h>
-#include <glew.h>
+#include "global.h"
 
-//#include "SDL_opengl.h"
-#include <iostream>
-#include <string>
-#include <stdio.h>
+#include "game.h"
 
-#include "errorHandler.h"
-#include "drawing.h"
+
+
+enum class GameState {INTRO, INTROMENU, LOADSCREEN, PLAY, MENU, CREDIT, EXIT};
+
+
+class GameObject	{
+private:
+	GameState _gameState;
+	bool _gameStateLoaded;
+	float _FPS;
+
+public:
+	GameObject();
+	void Run();
+	void Init();
+	void Loop();
+	void DrawScreen();
+	void ProcessInput();
+	void GameStep();
+
+
+	SDL_Event event;
+
+	Game game;
+
+};
+
+
+
+
+
+
+
+
