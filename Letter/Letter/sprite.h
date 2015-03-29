@@ -20,6 +20,8 @@ struct CollisionData	{
 	Position Point;
 };
 
+enum class SpriteType {LINE, TRIANGLE, RECT, TEXTURE, CIRCLE};
+
 //SPRITE CLASS
 class Sprite	{
 private :
@@ -31,21 +33,18 @@ private :
 		std::vector<Color> Color;
 		GLTexture Texture;
 		bool HasCollision;
-		int Type;
+		SpriteType Type;
 		int Size;
 		GLuint vboID;
 	};
 	std::vector<_VertexContainer> _vList;
 
 	void _UpdateList();
-	void _DrawLine(int vId);
-	void _DrawTriangle(int vId);
-	void _DrawRect(int vId);
-	void _DrawTexture(int vId);
+	void _DrawObject(int vId);
 public :
 	Sprite(float X = -1, float Y = -1, float Scale = 1, bool isNormalized = false);
 	~Sprite();
-	float X, Y, Scale;
+	float X, Y, Scale, PixelsPerSecond;
 	Color DrawColor;
 	void Move(float X, float Y);
 	void MoveTo(float X, float Y);

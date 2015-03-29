@@ -2,17 +2,22 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
+//CORE COMPONENT INCLUDES
 #include <Windows.h>
 #include <SDL.h>
 #include "glew.h"
 #include "SOIL.h"
 
+//BUILT IN C++ INCLUDES
 #include <iostream>
 #include <string>
-#include <stdio.h>
 
+
+//COMMON STRUCTS THAT ARE GLOBALLY ACCESSIBLE
 struct ScreenResolution {int Width, Height; float Ratio;};
-
+struct Size{float Width, Height;
+Size (float Width = 1, float Height = 1)	: Width(Width), Height(Height)	{}
+};
 struct Position{float X, Y;
 Position (float X = 0, float Y = 0)	: X(X), Y(Y)	{}
 };
@@ -26,11 +31,11 @@ UV(float U = 0, float V = 0) : U(U), V(V)	{}
 struct Vertex	{Position Position; Color Color; UV UV;};
 
 
-
-#include "GLSL.h"
-#include "errorHandler.h"
-#include "resourceManager.h"
-#include "IOManager.h"
+//CUSTOM GLOBALLY NEEDED CLASSES
+#include "GLSL.h" //Graphics Buffering Class
+#include "errorHandler.h" 
+#include "resourceManager.h" //Manages reusable textures etc
+#include "IOManager.h" 
 #include "sprite.h"
 
 
@@ -40,7 +45,7 @@ struct Vertex	{Position Position; Color Color; UV UV;};
 extern SDL_Window *SDLWindow;
 extern ScreenResolution ScreenRes;
 extern GLSL ColorProgram;
-extern float RunTime, Time;
+extern Uint32 RunTime, Time, FrameTimeElapsed;
 extern ResourceManager Resources;
 
 

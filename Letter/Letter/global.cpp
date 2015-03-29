@@ -4,5 +4,5 @@
 ScreenResolution ScreenRes;
 GLSL ColorProgram;
 SDL_Window *SDLWindow;
-float RunTime, Time;
+Uint32 RunTime, Time, FrameTimeElapsed;
 ResourceManager Resources;

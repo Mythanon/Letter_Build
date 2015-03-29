@@ -52,9 +52,9 @@ void GameObject::Init()	{
 	ScreenRes = ScreenResolution();
 	ScreenRes.Width = m_viewport[2];
 	ScreenRes.Height = m_viewport[3];
-	ScreenRes.Ratio = ((float)ScreenRes.Width / ScreenRes.Height);
+	ScreenRes.Ratio = ((float)ScreenRes.Width / ScreenRes.Height); //RETURNS THE RATIO BETWEEN SCREENWIDTH/HEIGHT  (4:3 aspect ratio returns 1.33..)
 
-	ColorProgram = GLSL();
+	ColorProgram = GLSL(); //Initializes our GLSL Graphics Buffer program.
 	ColorProgram.compileShaders("Shader/colorShading.vert", "Shader/colorShading.frag");
 	ColorProgram.addAttribute("vertexPosition");
 	ColorProgram.addAttribute("vertexColor");
@@ -62,12 +62,12 @@ void GameObject::Init()	{
 	ColorProgram.linkShaders();
 	ColorProgram.loadUniformLocations();
 
-	//Init resource manager
-	Resources = ResourceManager();
+	Resources = ResourceManager(); //Init resource manager
 }
 
 void GameObject::Loop()	{
-	float _FPSCurTicks = 0, _FPSLastTick = SDL_GetTicks(), _FPSFrameCount = 0;
+	Uint32 FPSCurTicks = 0, FPSLastTick = SDL_GetTicks();
+	float FPSFrameCount = 0, FPSFrameCutOff;
 	while(_gameState != GameState::EXIT)	{
 		if (_gameStateLoaded == false)	{
 			//INITIALIZE GAME STATE
@@ -79,27 +79,38 @@ void GameObject::Loop()	{
 		ProcessInput();
 		DrawScreen();
 		GameStep();
+		
+		//Handle FPS
 		RunTime = SDL_GetTicks();
-		_FPSCurTicks = _FPSCurTicks + RunTime - _FPSLastTick;
-		_FPSFrameCount++;
-		if (_FPSCurTicks > 1000)	{//A second has passed; Lets see how many frames have been processed, set FPS to that number, and remove a 1000ms(1 second) from _FPSCurTicks
-			_FPS = _FPSFrameCount;
+		FrameTimeElapsed = RunTime - FPSLastTick;
+		FPSCurTicks = FPSCurTicks + FrameTimeElapsed;
+		FPSFrameCount++;
+		if (FPSCurTicks > 1000)	{//A second has passed; Lets see how many frames have been processed in 1000MS, set FPS to that number, and remove a 1000MS from _FPSCurTicks
+			FPSFrameCutOff =((float)(FPSCurTicks - 1000) / FrameTimeElapsed);
+			_FPS = FPSFrameCount - 1 + (1 - FPSFrameCutOff);
 			std::cout << _FPS << std::endl;
-			_FPSCurTicks -= 1000;
-			_FPSFrameCount = 0;
+			FPSCurTicks -= 1000;
+			FPSFrameCount = FPSFrameCutOff;
 		}
-		_FPSLastTick = RunTime;
-		//SDL_Delay(2);
+		FPSLastTick = RunTime;
+//		SDL_Delay(3);
 	}
 }
 
 void GameObject::DrawScreen()	{
+	//Clear the screen
 	glClearDepth(1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	//Draw to the screen
 	ColorProgram.use();
+
+	//Call the draw function in whatever class depending on the current game state.
 	if (_gameState == GameState::PLAY)	{
-		game.Draw();
+		game.Draw(); 
 	}
+
+	//Swap to the new buffered window.
 	ColorProgram.unuse();
 	SDL_GL_SwapWindow(SDLWindow);
 }
@@ -107,10 +118,10 @@ void GameObject::DrawScreen()	{
 void GameObject::ProcessInput()	{
 	while ( SDL_PollEvent(&event) )	{
 		if (event.type == SDL_QUIT)	{
-			_gameState = GameState::EXIT;
+			_gameState = GameState::EXIT; //We can call SDL_QUIT anywhere which will then set event.type == SDL_QUIT then quitting the game.
 		}else	{
 			if (_gameState == GameState::PLAY)	{
-				game.KeyHandler(event);
+				game.KeyHandler(event); //Pass event information to the game class.
 			}
 		}
 	}
@@ -118,9 +129,9 @@ void GameObject::ProcessInput()	{
 
 
 
-void GameObject::GameStep()	{
+void GameObject::GameStep()	{//Essentially a wrapper to call the current gamestate gamestep function
 	if (_gameState == GameState::PLAY)	{
-		game.Step();
+		game.Step(); //Call the step function in game class.
 	}
 }
 

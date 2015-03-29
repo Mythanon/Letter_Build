@@ -22,7 +22,7 @@ TextureCache::~TextureCache()	{
 
 
 GLTexture TextureCache::GetTexture(std::string FilePath)	{
-	auto mit = _textureList.find(FilePath);
+	auto mit = _textureList.find(FilePath); //Info about the texture in textureList, returns .end() if the texture doesn't exist.
 	if (mit == _textureList.end())	{
 		GLTexture nT = LoadImage(FilePath);
 		_textureList.insert(make_pair(FilePath, nT));
