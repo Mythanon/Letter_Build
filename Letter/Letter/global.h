@@ -18,8 +18,8 @@ struct ScreenResolution {int Width, Height; float Ratio;};
 struct Size{float Width, Height;
 Size (float Width = 1, float Height = 1)	: Width(Width), Height(Height)	{}
 };
-struct Position{float X, Y;
-Position (float X = 0, float Y = 0)	: X(X), Y(Y)	{}
+struct Point{float X, Y;
+Point (float X = 0, float Y = 0)	: X(X), Y(Y)	{}
 };
 struct Color	{GLubyte R, G, B, A; bool isEmpty; 
 Color(GLubyte R = 0, GLubyte G = 0, GLubyte B = 0, GLubyte A = 255, bool empty = 0) : R(R), G(G), B(B), A(A), isEmpty(empty)	{}
@@ -28,7 +28,7 @@ struct UV {float U, V;
 UV(float U = 0, float V = 0) : U(U), V(V)	{}
 };
 
-struct Vertex	{Position Position; Color Color; UV UV;};
+struct Vertex	{Point Position; Color Color; UV UV;};
 
 
 //CUSTOM GLOBALLY NEEDED CLASSES
@@ -37,7 +37,7 @@ struct Vertex	{Position Position; Color Color; UV UV;};
 #include "resourceManager.h" //Manages reusable textures etc
 #include "IOManager.h" 
 #include "sprite.h"
-
+#include "levelMap.h"
 
 
 

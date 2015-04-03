@@ -14,7 +14,7 @@ private:
 
 public:
 	struct MapObject	{
-		Position Location;
+		Point Location;
 		Size Size;
 		SpriteType Type;
 	};
@@ -28,8 +28,9 @@ public:
 	Game(int Level = -1);
 	
 	Sprite Player;
-	Sprite Map;
-	
+//	Sprite Map;
+	LevelMap Map;
+
 	void InitLevel();
 	void Draw();
 	void KeyHandler(SDL_Event event);

@@ -68,6 +68,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="levelMap.h" />
     <ClInclude Include="sprite.h" />
     <ClInclude Include="errorHandler.h" />
     <ClInclude Include="game.h" />
@@ -83,6 +84,7 @@
     <ResourceCompile Include="Letter.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="levelMap.cpp" />
     <ClCompile Include="sprite.cpp" />
     <ClCompile Include="errorHandler.cpp" />
     <ClCompile Include="game.cpp" />

@@ -78,7 +78,6 @@ void GameObject::Loop()	{
 		}
 		ProcessInput();
 		DrawScreen();
-		GameStep();
 		
 		//Handle FPS
 		RunTime = SDL_GetTicks();
@@ -86,14 +85,18 @@ void GameObject::Loop()	{
 		FPSCurTicks = FPSCurTicks + FrameTimeElapsed;
 		FPSFrameCount++;
 		if (FPSCurTicks > 1000)	{//A second has passed; Lets see how many frames have been processed in 1000MS, set FPS to that number, and remove a 1000MS from _FPSCurTicks
-			FPSFrameCutOff =((float)(FPSCurTicks - 1000) / FrameTimeElapsed);
+			FPSFrameCutOff =((float)(FPSCurTicks - 1000.0f) / FrameTimeElapsed);
 			_FPS = FPSFrameCount - 1 + (1 - FPSFrameCutOff);
 			std::cout << _FPS << std::endl;
 			FPSCurTicks -= 1000;
 			FPSFrameCount = FPSFrameCutOff;
 		}
 		FPSLastTick = RunTime;
-//		SDL_Delay(3);
+
+		if (FrameTimeElapsed != 0)	{
+			GameStep();
+		}
+		//		SDL_Delay(3);
 	}
 }
 

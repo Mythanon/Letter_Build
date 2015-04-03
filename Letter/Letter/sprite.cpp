@@ -10,57 +10,96 @@ double Common_Round(double num)	{
 
 
 //RENDER SPRITE INITIALIZER
-Sprite::Sprite(float cX, float cY, float cScale, bool isNormalized) : _vC(0), X(cX), Y(cY), Scale(cScale), _iN(isNormalized), PixelsPerSecond(1.0f)	{
+Sprite::Sprite(Point Position, float cScale, bool isNormalized) : _vC(0), Position(Position), Scale(cScale), _iN(isNormalized), PixelsPerSecond(1.0f), _collisionObjId(-1), CollisionField(_CollisionFieldObject())	{
+	CollisionField.Type = SpriteType::RECT;
+	CollisionField.BottomLeft = Position;
+	CollisionField.TopRight = Position;
 }
 Sprite::~Sprite()	{
 
 }
 
 
-void Sprite::MoveTo(float nX, float nY)	{
-	X = nX; Y = nY;
+Point Sprite::_scaleMoveToFrame(Point p)	{
+	return Point(p.X * (float)FrameTimeElapsed * PixelsPerSecond, p.Y * (float)FrameTimeElapsed * PixelsPerSecond);
+}
+void Sprite::MoveTo(Point NewPoint)	{
+	float aXD = NewPoint.X - Position.X;
+	float aYD = NewPoint.Y - Position.Y;
+	Position = NewPoint;
+	CollisionField.BottomLeft.X += aXD;
+	CollisionField.TopRight.X += aXD;
+	CollisionField.BottomLeft.Y += aYD;
+	CollisionField.TopRight.Y += aYD;
+	for (size_t i = 0; i < Children.size(); i++)	{
+		Children[i].MoveTo(NewPoint);
+	}
 	_UpdateList();
-}void Sprite::Move(float nX, float nY)	{
-	X += ((float)(FrameTimeElapsed / PixelsPerSecond * nX));
-	Y += (FrameTimeElapsed / PixelsPerSecond * nY);
+}void Sprite::Move(Point OffsetPoint)	{
+	Point tP = _scaleMoveToFrame(OffsetPoint);
+	Position.X += tP.X;
+	CollisionField.BottomLeft.X += tP.X;
+	CollisionField.TopRight.X += tP.X;
+	Position.Y += tP.Y;
+	CollisionField.BottomLeft.Y += tP.Y;
+	CollisionField.TopRight.Y += tP.Y;
+	for (size_t i = 0; i < Children.size(); i++)	{
+		Children[i].Move(OffsetPoint);
+	}
 	_UpdateList();
 }
+
 void Sprite::SetScale(float nScale)	{
 	Scale = nScale;
+	for (size_t i = 0; i < Children.size(); i++)	{
+		Children[i].SetScale(nScale);
+	}
 	_UpdateList();
 }
 
 
 void Sprite::SetColor(Color C)	{
-	_dC.R = C.R;
+	_dC= C;
+	for (size_t i = 0; i < Children.size(); i++)	{
+		Children[i].SetColor(C);
+	}
 }
 
-void Sprite::AddLine(bool HasCollision, Position P1, Position P2, Color C1, Color C2)	{
+int Sprite::AddSprite(Point p, float s, bool iN)	{
+	Children.push_back(Sprite(Point(Position.X + p.X, Position.Y + p.Y), s, iN));
+	return Children.size() - 1;
+}
+
+int Sprite::AddLine(bool HasCollision, Point P1, Point P2, Color C1, Color C2)	{
 	if (C1.isEmpty == 1)	{C1 = _dC;}
 	if (C2.isEmpty == 1)	{C2 = C1;}
-	_vList.push_back(_VertexContainer());
+	_vList.push_back(_ElementObject());
 	glGenBuffers(1, &_vList[_vC].vboID);
 	_vList[_vC].Type = SpriteType::LINE;
 	_vList[_vC].HasCollision = HasCollision;
-	_vList[_vC].Point = std::vector<Position>(2);
+	_vList[_vC].Point = std::vector<Point>(2);
 	_vList[_vC].Point[0] = P1;
 	_vList[_vC].Point[1] = P2;
 	_vList[_vC].Color = std::vector<Color>(2);
 	_vList[_vC].Color[0] = C1;
 	_vList[_vC].Color[1] = C2;
+	if (_collisionObjId == -1)	{
+		_AdjustCollisionField(_vList[_vC].Point);
+	}
 	_DrawObject(_vC);
 	_vC ++;
+	return _vC - 1;
 }
 
-void Sprite::AddTriangle(bool HasCollision, Position P1, Position P2, Position P3, Color C1, Color C2, Color C3)	{
+int Sprite::AddTriangle(bool HasCollision, Point P1, Point P2, Point P3, Color C1, Color C2, Color C3)	{
 	if (C1.isEmpty == 1)	{C1 = _dC;}
 	if (C2.isEmpty == 1)	{C2 = C1;}
 	if (C3.isEmpty == 1)	{C3 = C1;}
-	_vList.push_back(_VertexContainer());
+	_vList.push_back(_ElementObject());
 	glGenBuffers(1, &_vList[_vC].vboID);
 	_vList[_vC].Type = SpriteType::TRIANGLE;
 	_vList[_vC].HasCollision = HasCollision;
-	_vList[_vC].Point = std::vector<Position>(3);
+	_vList[_vC].Point = std::vector<Point>(3);
 	_vList[_vC].Point[0] = P1;
 	_vList[_vC].Point[1] = P2;
 	_vList[_vC].Point[2] = P3;
@@ -68,55 +107,66 @@ void Sprite::AddTriangle(bool HasCollision, Position P1, Position P2, Position P
 	_vList[_vC].Color[0] = C1;
 	_vList[_vC].Color[1] = C2;
 	_vList[_vC].Color[2] = C3;
+	if (_collisionObjId == -1)	{
+		_AdjustCollisionField(_vList[_vC].Point);
+	}
 	_DrawObject(_vC);
 	_vC ++;
-
+	return _vC - 1;
 }
 
-void Sprite::AddRect(bool HasCollision, Position P1, Position P2, Color C1, Color C2)	{
+int Sprite::AddRect(bool HasCollision, Point P, Size S, Color C1, Color C2)	{
 	if (C1.isEmpty == 1)	{C1 = _dC;}
 	if (C2.isEmpty == 1)	{C2 = C1;}
-	_vList.push_back(_VertexContainer());
+	_vList.push_back(_ElementObject());
 	glGenBuffers(1, &_vList[_vC].vboID);
 	_vList[_vC].Type = SpriteType::RECT;
 	_vList[_vC].HasCollision = HasCollision;
-	_vList[_vC].Point = std::vector<Position>(4);
-	_vList[_vC].Point[0] = P1;
-	_vList[_vC].Point[1] = Position(P1.X, P2.Y);
-	_vList[_vC].Point[2] = P2;
-	_vList[_vC].Point[3] = Position(P2.X, P1.Y);
+	_vList[_vC].Point = std::vector<Point>(4);
+	_vList[_vC].Point[0] = P;
+	_vList[_vC].Point[1] = Point(P.X, P.Y + S.Height);
+	_vList[_vC].Point[2] = Point (P.X + S.Width, P.Y + S.Height);
+	_vList[_vC].Point[3] = Point(P.X + S.Width, P.Y);
 	_vList[_vC].Color = std::vector<Color>(2);
 	_vList[_vC].Color[0] = C1;
-	_vList[_vC].Color[1] = C2; 
+	_vList[_vC].Color[1] = C2;
+	if (_collisionObjId == -1)	{
+		_AdjustCollisionField(_vList[_vC].Point);
+	}
 	_DrawObject(_vC);
 	_vC ++;
+	return _vC - 1;
 }
 
-void Sprite::AddTexture(bool HasCollision, Position P1, Position P2, std::string TexturePath)	{
-	_vList.push_back(_VertexContainer());
+int Sprite::AddTexture(bool HasCollision, Point P, Size S, std::string TexturePath)	{
+	_vList.push_back(_ElementObject());
 	glGenBuffers(1, &_vList[_vC].vboID);
 	_vList[_vC].Type = SpriteType::TEXTURE;
 	_vList[_vC].HasCollision = HasCollision;	
 	_vList[_vC].Texture = Resources.GetTexture(TexturePath);
-	_vList[_vC].Point = std::vector<Position>(4);
-	_vList[_vC].Point[0] = P1;
-	_vList[_vC].Point[1] = Position(P1.X, P2.Y);
-	_vList[_vC].Point[2] = P2;
-	_vList[_vC].Point[3] = Position(P2.X, P1.Y);
+	_vList[_vC].Point = std::vector<Point>(4);
+	_vList[_vC].Point[0] = P;
+	_vList[_vC].Point[1] = Point(P.X, P.Y + S.Height);
+	_vList[_vC].Point[2] = Point (P.X + S.Width, P.Y + S.Height);
+	_vList[_vC].Point[3] = Point(P.X + S.Width, P.Y);
+	if (_collisionObjId == -1)	{
+		_AdjustCollisionField(_vList[_vC].Point);
+	}
 	_DrawObject(_vC);
 	_vC ++;
+	return _vC - 1;
 }
 
 void Sprite::_DrawObject(int vId)	{
-	std::vector<Vertex> vD(6);
+	std::vector<Vertex> vD(_vList[vId].Point.size());
 	for (size_t i = 0; i < _vList[vId].Point.size(); i++)	{
 		vD[i].Position = _vList[vId].Point[i];
 		if (_iN == true)	{
-			vD[i].Position.X = (vD[i].Position.X * Scale) + X;
-			vD[i].Position.Y = (vD[i].Position.Y * Scale) + Y;
+			vD[i].Position.X = Position.X + (vD[i].Position.X * Scale);
+			vD[i].Position.Y = Position.Y + (vD[i].Position.Y * Scale);
 		}else	{
-			vD[i].Position.X = ((vD[i].Position.X * Scale) + X) / 500 - 1;
-			vD[i].Position.Y = ((vD[i].Position.Y * Scale) + Y) / (500) - 1;
+			vD[i].Position.X = (Position.X + (vD[i].Position.X * Scale)) / 500 - 1;
+			vD[i].Position.Y = (Position.Y + (vD[i].Position.Y * Scale)) / (500) - 1;
 		}
 		if (_vList[vId].Type == SpriteType::TEXTURE)	{
 			vD[i].Color = Color(255, 255, 255, 255);
@@ -176,12 +226,72 @@ void Sprite::Update()	{
 	}
 }	
 
+void Sprite::UpdateChildren()	{
+	for (size_t i = 0; i < Children.size(); i++)	{
+		Children[i].Update();
+	}
+}
 
 
-CollisionData Sprite::IsCollidedWith(Sprite Sprite)	{
-	CollisionData cd = CollisionData();
-	
-	return cd;
+
+
+
+
+
+//COLLISION DETECTION SYSTEM
+void Sprite::_AdjustCollisionField(std::vector<Point> Points)	{
+	float curPos;
+	for (size_t i = 0; i < Points.size(); i++)	{
+		curPos = Position.X + (Points[i].X * Scale);
+		if (CollisionField.BottomLeft.X > curPos)	{
+			CollisionField.BottomLeft.X = curPos;
+		}else if (CollisionField.TopRight.X < curPos)	{
+			CollisionField.TopRight.X = curPos;
+		}
+		curPos = Position.Y + (Points[i].Y * Scale);
+		if (CollisionField.BottomLeft.Y > curPos)	{
+			CollisionField.BottomLeft.Y = curPos;
+		}else if (CollisionField.TopRight.Y < curPos)	{
+			CollisionField.TopRight.Y = curPos;
+		}
+	}
+	CollisionField.Size.Width = CollisionField.TopRight.X - CollisionField.BottomLeft.X;
+	CollisionField.Size.Height = CollisionField.TopRight.Y - CollisionField.BottomLeft.Y;
+	std::cout << "(" << CollisionField.BottomLeft.X << "," << CollisionField.BottomLeft.Y << ")" << std::endl;
+	std::cout << "(" << CollisionField.TopRight.X << "," << CollisionField.TopRight.Y << ")" << std::endl;
+}
+
+
+
+void Sprite::SetCollisionObject(int oId)	{
+	_collisionObjId = oId;
+	CollisionField.Type = _vList[oId].Type;
+	_AdjustCollisionField(_vList[oId].Point);
+}
+
+CollisionData Sprite::PredictCollision(Sprite cS, Point tTP)	{
+	CollisionData cD = CollisionData();
+	Point tP = _scaleMoveToFrame(tTP);
+	Point bS[4]; //Current Sprite Coord's, including the movement involved.
+	bS[0] = Point(CollisionField.BottomLeft.X + tP.X, CollisionField.BottomLeft.Y + tP.Y);
+	bS[1] = Point(CollisionField.BottomLeft.X + tP.X, CollisionField.TopRight.Y + tP.Y);
+	bS[2] = Point(CollisionField.TopRight.X + tP.X, CollisionField.TopRight.Y + tP.Y);
+	bS[3] = Point(CollisionField.TopRight.X + tP.X, CollisionField.BottomLeft.Y + tP.Y);
+
+
+
+	for (int i = 0; i < 4; i++)	{
+		if (bS[i].X >= cS.CollisionField.BottomLeft.X && bS[i].X <= cS.CollisionField.TopRight.X && //THIS JUST CHECKS IF ITS CLOSE (TREATING THE OBJECT LIKE A BOX)
+			bS[i].Y >= cS.CollisionField.BottomLeft.Y && bS[i].Y <= cS.CollisionField.TopRight.Y)	{ //YAY BASE COLLISION, NOW CHECK WHAT KIND OF OBJECT WE'RE REALLY CHECKING
+					cD.isCollided = true;
+				//if (CollisionField.Type == CollisionField.ALPHAMASK)	{//THIS IS 
+				//}
+			
+		}
+	}
+
+
+	return cD;
 }
 
 
