@@ -1,8 +1,11 @@
 #pragma once
+#include "global.h"
+
 #ifndef LEVELMAP_H
 #define LEVELMAP_H
 
-#include "global.h"
+#include "sprite.h"
+
 
 class LevelMap {
 

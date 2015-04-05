@@ -7,6 +7,59 @@ double Common_Round(double num)	{
 	return (num > 0.0) ? floor(num + 0.5) : ceil(num - 0.5);
 }
 
+//OTHER SHIT
+bool LineIntersection(Point l1a, Point l1b, Point l2a, Point l2b, Point *iP)	{
+	//Get the line-point offsets.
+	float d1x, d1y, d2x, d2y;
+	d1x = l1b.X - l1a.X;	d1y = l1b.Y - l1a.Y;
+	d2x = l2b.X - l2a.X;	d2y = l2b.Y - l2a.Y;
+
+	//I don't know how this works yet, unfortunate copy paste from online (Had to get this working ASAP)
+	float s, t;
+	s = (-d1y * (l1a.X - l2a.X) + d1x * (l1a.Y - l2a.Y)) / (-d2x * d1y + d1x * d2y);
+	t = (d2x * (l1a.Y - l2a.Y) - d2y * (l1a.X - l2a.X)) / (-d2x * d1y + d1x * d2y);
+	if (s >= 0 && s <= 1 && t >= 0 && t <= 1)	{ //Collision detected, return intersection point
+		if (iP != NULL)	{
+			iP = new Point(l1a.X + (t * d1x), l1a.Y + (t * d1y)); //Set passed in variable to the collision intersection point
+		}
+		return true;
+	}
+	return false;
+}
+//Idealy, we want to detect a complete collision
+//Then we see half the transition, check for collision again. If false, we know its the between 50-100% of the transition, if true, we know its 0-50%
+//This cuts the work initially in half in determining how far the transition can complete without it being a collision.
+//From here, we repeat, halfing one or the other. Until we get false, and true at +1.
+//bool PredictCollision(Sprite sA, Sprite sB, Point t, Point *sT)	{
+//	if (t.X == 0 && t.Y == 0)	{
+//		return false;
+//	}
+//	Point returnPoint;
+//	Point l1a, l1b, l2a, l2b;
+//
+//	for (size_t aI = 0; aI <= sA.Element.size(); aI++)	{ //Cycle through all sprite elements in sprite A
+//		for (size_t bI = 0; bI <= sB.Element.size(); bI++)	{ //Cycle through all sprite elements in sprite B
+//			for (size_t aEI = 0; aEI <= sA.Element[aI].Point.size(); aEI++)	{ //Cycle through all points in sprite A element [aI]
+//				for (size_t bEI = 0; bEI <= sB.Element[bI].Point.size(); bEI++)	{ //Cycle through all points in sprite B element [bI]
+//					l1a = Point(sA.Element[aI].Point[aEI].X + sA.Position.X, sA.Element[aI].Point[aEI].Y + sA.Position.Y);
+//					l1b = Point (l1a.X + t.X, l1a.Y + t.Y);
+//					/*if (LineIntersection(sA.Element[aI].Point[aEI], returnPoint)	== true)	{
+//
+//
+//					}*/
+//
+//				}
+//			}
+//		}
+//	}
+//	return false;
+//}
+
+
+
+
+
+
 
 
 //RENDER SPRITE INITIALIZER
@@ -73,18 +126,18 @@ int Sprite::AddSprite(Point p, float s, bool iN)	{
 int Sprite::AddLine(bool HasCollision, Point P1, Point P2, Color C1, Color C2)	{
 	if (C1.isEmpty == 1)	{C1 = _dC;}
 	if (C2.isEmpty == 1)	{C2 = C1;}
-	_vList.push_back(_ElementObject());
-	glGenBuffers(1, &_vList[_vC].vboID);
-	_vList[_vC].Type = SpriteType::LINE;
-	_vList[_vC].HasCollision = HasCollision;
-	_vList[_vC].Point = std::vector<Point>(2);
-	_vList[_vC].Point[0] = P1;
-	_vList[_vC].Point[1] = P2;
-	_vList[_vC].Color = std::vector<Color>(2);
-	_vList[_vC].Color[0] = C1;
-	_vList[_vC].Color[1] = C2;
+	Element.push_back(ElementObject());
+	glGenBuffers(1, &Element[_vC].vboID);
+	Element[_vC].Type = SpriteType::LINE;
+	Element[_vC].HasCollision = HasCollision;
+	Element[_vC].Point = std::vector<Point>(2);
+	Element[_vC].Point[0] = P1;
+	Element[_vC].Point[1] = P2;
+	Element[_vC].Color = std::vector<Color>(2);
+	Element[_vC].Color[0] = C1;
+	Element[_vC].Color[1] = C2;
 	if (_collisionObjId == -1)	{
-		_AdjustCollisionField(_vList[_vC].Point);
+		_AdjustCollisionField(Element[_vC].Point);
 	}
 	_DrawObject(_vC);
 	_vC ++;
@@ -95,20 +148,20 @@ int Sprite::AddTriangle(bool HasCollision, Point P1, Point P2, Point P3, Color C
 	if (C1.isEmpty == 1)	{C1 = _dC;}
 	if (C2.isEmpty == 1)	{C2 = C1;}
 	if (C3.isEmpty == 1)	{C3 = C1;}
-	_vList.push_back(_ElementObject());
-	glGenBuffers(1, &_vList[_vC].vboID);
-	_vList[_vC].Type = SpriteType::TRIANGLE;
-	_vList[_vC].HasCollision = HasCollision;
-	_vList[_vC].Point = std::vector<Point>(3);
-	_vList[_vC].Point[0] = P1;
-	_vList[_vC].Point[1] = P2;
-	_vList[_vC].Point[2] = P3;
-	_vList[_vC].Color = std::vector<Color>(3);
-	_vList[_vC].Color[0] = C1;
-	_vList[_vC].Color[1] = C2;
-	_vList[_vC].Color[2] = C3;
+	Element.push_back(ElementObject());
+	glGenBuffers(1, &Element[_vC].vboID);
+	Element[_vC].Type = SpriteType::TRIANGLE;
+	Element[_vC].HasCollision = HasCollision;
+	Element[_vC].Point = std::vector<Point>(3);
+	Element[_vC].Point[0] = P1;
+	Element[_vC].Point[1] = P2;
+	Element[_vC].Point[2] = P3;
+	Element[_vC].Color = std::vector<Color>(3);
+	Element[_vC].Color[0] = C1;
+	Element[_vC].Color[1] = C2;
+	Element[_vC].Color[2] = C3;
 	if (_collisionObjId == -1)	{
-		_AdjustCollisionField(_vList[_vC].Point);
+		_AdjustCollisionField(Element[_vC].Point);
 	}
 	_DrawObject(_vC);
 	_vC ++;
@@ -118,20 +171,20 @@ int Sprite::AddTriangle(bool HasCollision, Point P1, Point P2, Point P3, Color C
 int Sprite::AddRect(bool HasCollision, Point P, Size S, Color C1, Color C2)	{
 	if (C1.isEmpty == 1)	{C1 = _dC;}
 	if (C2.isEmpty == 1)	{C2 = C1;}
-	_vList.push_back(_ElementObject());
-	glGenBuffers(1, &_vList[_vC].vboID);
-	_vList[_vC].Type = SpriteType::RECT;
-	_vList[_vC].HasCollision = HasCollision;
-	_vList[_vC].Point = std::vector<Point>(4);
-	_vList[_vC].Point[0] = P;
-	_vList[_vC].Point[1] = Point(P.X, P.Y + S.Height);
-	_vList[_vC].Point[2] = Point (P.X + S.Width, P.Y + S.Height);
-	_vList[_vC].Point[3] = Point(P.X + S.Width, P.Y);
-	_vList[_vC].Color = std::vector<Color>(2);
-	_vList[_vC].Color[0] = C1;
-	_vList[_vC].Color[1] = C2;
+	Element.push_back(ElementObject());
+	glGenBuffers(1, &Element[_vC].vboID);
+	Element[_vC].Type = SpriteType::RECT;
+	Element[_vC].HasCollision = HasCollision;
+	Element[_vC].Point = std::vector<Point>(4);
+	Element[_vC].Point[0] = P;
+	Element[_vC].Point[1] = Point(P.X, P.Y + S.Height);
+	Element[_vC].Point[2] = Point (P.X + S.Width, P.Y + S.Height);
+	Element[_vC].Point[3] = Point(P.X + S.Width, P.Y);
+	Element[_vC].Color = std::vector<Color>(2);
+	Element[_vC].Color[0] = C1;
+	Element[_vC].Color[1] = C2;
 	if (_collisionObjId == -1)	{
-		_AdjustCollisionField(_vList[_vC].Point);
+		_AdjustCollisionField(Element[_vC].Point);
 	}
 	_DrawObject(_vC);
 	_vC ++;
@@ -139,18 +192,18 @@ int Sprite::AddRect(bool HasCollision, Point P, Size S, Color C1, Color C2)	{
 }
 
 int Sprite::AddTexture(bool HasCollision, Point P, Size S, std::string TexturePath)	{
-	_vList.push_back(_ElementObject());
-	glGenBuffers(1, &_vList[_vC].vboID);
-	_vList[_vC].Type = SpriteType::TEXTURE;
-	_vList[_vC].HasCollision = HasCollision;	
-	_vList[_vC].Texture = Resources.GetTexture(TexturePath);
-	_vList[_vC].Point = std::vector<Point>(4);
-	_vList[_vC].Point[0] = P;
-	_vList[_vC].Point[1] = Point(P.X, P.Y + S.Height);
-	_vList[_vC].Point[2] = Point (P.X + S.Width, P.Y + S.Height);
-	_vList[_vC].Point[3] = Point(P.X + S.Width, P.Y);
+	Element.push_back(ElementObject());
+	glGenBuffers(1, &Element[_vC].vboID);
+	Element[_vC].Type = SpriteType::TEXTURE;
+	Element[_vC].HasCollision = HasCollision;	
+	Element[_vC].Texture = Resources.GetTexture(TexturePath);
+	Element[_vC].Point = std::vector<Point>(4);
+	Element[_vC].Point[0] = P;
+	Element[_vC].Point[1] = Point(P.X, P.Y + S.Height);
+	Element[_vC].Point[2] = Point (P.X + S.Width, P.Y + S.Height);
+	Element[_vC].Point[3] = Point(P.X + S.Width, P.Y);
 	if (_collisionObjId == -1)	{
-		_AdjustCollisionField(_vList[_vC].Point);
+		_AdjustCollisionField(Element[_vC].Point);
 	}
 	_DrawObject(_vC);
 	_vC ++;
@@ -158,9 +211,9 @@ int Sprite::AddTexture(bool HasCollision, Point P, Size S, std::string TexturePa
 }
 
 void Sprite::_DrawObject(int vId)	{
-	std::vector<Vertex> vD(_vList[vId].Point.size());
-	for (size_t i = 0; i < _vList[vId].Point.size(); i++)	{
-		vD[i].Position = _vList[vId].Point[i];
+	std::vector<Vertex> vD(Element[vId].Point.size());
+	for (size_t i = 0; i < Element[vId].Point.size(); i++)	{
+		vD[i].Position = Element[vId].Point[i];
 		if (_iN == true)	{
 			vD[i].Position.X = Position.X + (vD[i].Position.X * Scale);
 			vD[i].Position.Y = Position.Y + (vD[i].Position.Y * Scale);
@@ -168,43 +221,43 @@ void Sprite::_DrawObject(int vId)	{
 			vD[i].Position.X = (Position.X + (vD[i].Position.X * Scale)) / 500 - 1;
 			vD[i].Position.Y = (Position.Y + (vD[i].Position.Y * Scale)) / (500) - 1;
 		}
-		if (_vList[vId].Type == SpriteType::TEXTURE)	{
+		if (Element[vId].Type == SpriteType::TEXTURE)	{
 			vD[i].Color = Color(255, 255, 255, 255);
 		}else	{
-			vD[i].Color = _vList[vId].Color[i];
+			vD[i].Color = Element[vId].Color[i];
 		}
 	}
-	if (_vList[vId].Type == SpriteType::RECT)	{
-		vD[0].Color = _vList[vId].Color[0];
-		vD[3].Color = _vList[vId].Color[1];
-	}else if (_vList[vId].Type == SpriteType::TEXTURE)	{
+	if (Element[vId].Type == SpriteType::RECT)	{
+		vD[0].Color = Element[vId].Color[0];
+		vD[3].Color = Element[vId].Color[1];
+	}else if (Element[vId].Type == SpriteType::TEXTURE)	{
 		vD[0].UV = UV(0.0f, 0.0f);
 		vD[1].UV = UV(0.0f, 1.0f);
 		vD[2].UV = UV(1.0f, 1.0f);
 		vD[3].UV = UV(1.0f, 0.0f);
 	}
-	glBindBuffer(GL_ARRAY_BUFFER, _vList[vId].vboID);
+	glBindBuffer(GL_ARRAY_BUFFER, Element[vId].vboID);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vD[0]) * vD.size(), &vD[0], GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void Sprite::_UpdateList()	{
-	for (size_t i = 0; i < _vList.size(); i++)	{
+	for (size_t i = 0; i < Element.size(); i++)	{
 		_DrawObject(i);
 	}
 }
 
 void Sprite::Update()	{
-	for (size_t i = 0; i < _vList.size(); i++)	{
-		glBindBuffer(GL_ARRAY_BUFFER, _vList[i].vboID);
+	for (size_t i = 0; i < Element.size(); i++)	{
+		glBindBuffer(GL_ARRAY_BUFFER, Element[i].vboID);
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Position));
 		glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), (void*)offsetof(Vertex, Color));
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, UV));
-		if (_vList[i].Type == SpriteType::TEXTURE)	{
+		if (Element[i].Type == SpriteType::TEXTURE)	{
 			glUniform1i(ColorProgram.getUniformLocation("isTexture"), GL_TRUE);
 			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, _vList[i].Texture.id);
+			glBindTexture(GL_TEXTURE_2D, Element[i].Texture.id);
 			glUniform1i(ColorProgram.getUniformLocation("curTexture"), 0);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glEnable(GL_BLEND);
@@ -213,12 +266,12 @@ void Sprite::Update()	{
 		}else	{
 			glUniform1i(ColorProgram.getUniformLocation("isTexture"), GL_FALSE);
 		}
-		if(_vList[i].Type == SpriteType::LINE)	{
+		if(Element[i].Type == SpriteType::LINE)	{
 			glLineWidth(1.0);
 			glDrawArrays(GL_LINES, 0, 2);
-		}else if (_vList[i].Type == SpriteType::TRIANGLE)	{
+		}else if (Element[i].Type == SpriteType::TRIANGLE)	{
 			glDrawArrays(GL_TRIANGLES, 0, 3);
-		}else if (_vList[i].Type == SpriteType::RECT)	{
+		}else if (Element[i].Type == SpriteType::RECT)	{
 			glDrawArrays(GL_QUADS, 0, 4);
 		}
 		glDisableVertexAttribArray(0);
@@ -257,48 +310,69 @@ void Sprite::_AdjustCollisionField(std::vector<Point> Points)	{
 	}
 	CollisionField.Size.Width = CollisionField.TopRight.X - CollisionField.BottomLeft.X;
 	CollisionField.Size.Height = CollisionField.TopRight.Y - CollisionField.BottomLeft.Y;
-	std::cout << "(" << CollisionField.BottomLeft.X << "," << CollisionField.BottomLeft.Y << ")" << std::endl;
-	std::cout << "(" << CollisionField.TopRight.X << "," << CollisionField.TopRight.Y << ")" << std::endl;
 }
 
 
 
 void Sprite::SetCollisionObject(int oId)	{
 	_collisionObjId = oId;
-	CollisionField.Type = _vList[oId].Type;
-	_AdjustCollisionField(_vList[oId].Point);
+	CollisionField.Type = Element[oId].Type;
+	_AdjustCollisionField(Element[oId].Point);
 }
 
-CollisionData Sprite::PredictCollision(Sprite cS, Point tTP)	{
-	CollisionData cD = CollisionData();
-	Point tP = _scaleMoveToFrame(tTP);
-	Point bS[4]; //Current Sprite Coord's, including the movement involved.
-	bS[0] = Point(CollisionField.BottomLeft.X + tP.X, CollisionField.BottomLeft.Y + tP.Y);
-	bS[1] = Point(CollisionField.BottomLeft.X + tP.X, CollisionField.TopRight.Y + tP.Y);
-	bS[2] = Point(CollisionField.TopRight.X + tP.X, CollisionField.TopRight.Y + tP.Y);
-	bS[3] = Point(CollisionField.TopRight.X + tP.X, CollisionField.BottomLeft.Y + tP.Y);
-
-
-
-	for (int i = 0; i < 4; i++)	{
-		if (bS[i].X >= cS.CollisionField.BottomLeft.X && bS[i].X <= cS.CollisionField.TopRight.X && //THIS JUST CHECKS IF ITS CLOSE (TREATING THE OBJECT LIKE A BOX)
-			bS[i].Y >= cS.CollisionField.BottomLeft.Y && bS[i].Y <= cS.CollisionField.TopRight.Y)	{ //YAY BASE COLLISION, NOW CHECK WHAT KIND OF OBJECT WE'RE REALLY CHECKING
-					cD.isCollided = true;
-				//if (CollisionField.Type == CollisionField.ALPHAMASK)	{//THIS IS 
-				//}
-			
+std::vector<Point> _PredictCollisionHelper(Sprite sA, Sprite sB, Point t)	{
+	std::vector<Point> intercept;
+	Point returnPoint;
+	Point l1a, l1b, l2a, l2b;
+	for (size_t aI = 0; aI < sA.Element.size(); aI++)	{ //Cycle through all sprite elements in sprite A
+		if (sA.Element[aI].HasCollision == true)	{ //Check if element has collision on...
+			for (size_t bI = 0; bI < sB.Element.size(); bI++)	{ //Cycle through all sprite elements in sprite B
+				if (sB.Element[bI].HasCollision == true)	{ //Check if element has collision on...
+					for (size_t aEI = 0; aEI < sA.Element[aI].Point.size(); aEI++)	{ //Cycle through all points in sprite A element [aI]
+						for (size_t bEI = 0; bEI < sB.Element[bI].Point.size(); bEI++)	{ //Cycle through all points in sprite B element [bI]
+							l1a = Point(sA.Element[aI].Point[aEI].X + sA.Position.X, sA.Element[aI].Point[aEI].Y + sA.Position.Y);
+							l1b = Point (l1a.X + t.X, l1a.Y + t.Y);
+							l2a = Point (sB.Element[bI].Point[bEI].X + sB.Position.X, sB.Element[bI].Point[bEI].Y + sB.Position.Y);
+							if (bEI == sB.Element[bI].Point.size())	{
+								l2b = Point (sB.Element[bI].Point[0].X + sB.Position.X, sB.Element[bI].Point[0].Y + sB.Position.Y);
+							}else	{
+								l2b = Point (sB.Element[bI].Point[bEI + 1].X + sB.Position.X, sB.Element[bI].Point[bEI + 1].Y + sB.Position.Y);
+							}
+							if (LineIntersection(l1a, l1b, l2a, l2b, &returnPoint)	== true)	{
+								intercept.push_back(returnPoint);
+							}
+						}
+					}
+				}
+			}
 		}
 	}
-
-
-	return cD;
+	return intercept;
 }
 
+bool Sprite::PredictCollision(Sprite sB, Point t, Point *rT)	{
+	if (t.X == 0 && t.Y == 0)	{
+		return false;
+	}
+	Point sT = _scaleMoveToFrame(t);
+	Point returnPoint;
+	std::vector<Point> interseptPointsA;
+	std::vector<Point> interseptPointsB;
+	interseptPointsA = _PredictCollisionHelper(*this, sB, t);
+	interseptPointsB = _PredictCollisionHelper(sB, *this, Point (-t.X, -t.Y));
+	if (interseptPointsA.size() > 0)	{
+		*rT = interseptPointsA[0];
+		return true;
+	}
+	if (interseptPointsB.size() > 0)	{
+		*rT = interseptPointsB[0];
+		return true;
+	}
 
+	
 
-
-
-
+	return false;
+}
 
 
 

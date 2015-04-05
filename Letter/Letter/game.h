@@ -1,8 +1,9 @@
 #pragma once
+#include "global.h"
+
 #ifndef GAME_H
 #define GAME_H
 
-#include "global.h"
 
 
 class Game	{
@@ -37,9 +38,9 @@ public:
 	void Step();
 
 	void Player_Jump();
+	Point Vel;
 
 	float fScale;
-	float velX, velY;
 	float accX, decX;
 	float maxVelX, maxVelY;
 

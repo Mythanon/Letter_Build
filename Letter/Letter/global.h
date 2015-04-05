@@ -37,7 +37,6 @@ struct Vertex	{Point Position; Color Color; UV UV;};
 #include "resourceManager.h" //Manages reusable textures etc
 #include "IOManager.h" 
 #include "sprite.h"
-#include "levelMap.h"
 
 
 
