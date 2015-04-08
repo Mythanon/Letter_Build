@@ -1,0 +1,39 @@
+[08/04/2015] - Deryk Richardson
+
+See Collision.png
+
+-Currently this is how collision works >>
+We cycle through all points in Sprite A, adding the transition amounts to each point.
+Loop through all the lines in Sprite B now, checking if there was any collision.
+But wait, see Collision2.png!
+So now we are able to detect any collision right? Right, but we have 2 bugs now.
+Since we are constantly applying gravity to the player in the game, yVel is never 0. Meaning if the player(box) is directly on top of another object.
+Since gravity is being applied, the box's transitional points want to move down. But wait, now that that's occuring, no matter what we set xVelocity to, the
+transitional line collides exactly where it started. Which leaves the player unable to move. 
+This is TODO#1, we need a fix for this. Maybe a way to determine if the point is already on a line for X or Y, and if thats the case than forgetting the respective
+X or Y velocity, only dealing with the other. Thus 
+"
+If Y of point = Y of line where the lines points have the same Y value (flat line)
+Then yVeloc = 0, in which case we only look at the xVeloc, where now the boxes transitional line never collides with the box below it, oh wait it still does right?
+Because the line is not directly on top of the floor.
+
+I've already implemented a fix for that problem.
+Depending on the transition, the function adds 0.0001f or -0.0001f to SpriteA to basically lift it off the SpriteB, so theres no initial collision before any 
+transition. and then after the collision detection it removes that offset. This is working. Brilliantly. Except 1 problem which is occuring.
+
+If the SpriteA lands on a triangle SpriteB, on an angled side. It collides correctly and stops. However something wierd happens and somehow that 0.0001 offset renders the
+point of SpriteA inside the triangle some how, meaning if you then hit the left or right arrow keep applying xVeloc to move, since that point is now already inside the trinagle
+theres no collision for that point, so you fall inside the triangle until another point collides with that line. FUCK right?
+
+See Collision3.png for a visual.
+
+Now, try to understand how the PredictCollision function works on line 35 of Sprite.cpp
+It loops through all elements of the sprite, then checks if the element has "HasCollision" set to true, so we can add particle affects to some sprites where we don't
+want to have collision for those things. Now that it has collision, it loops through all the elements of sprite B. Doing the same thing.
+Then cycles through all the points. So it can have 3 or 25 verticies. The only case this doesnt work for yet is circles. Which for now we'll leave out.
+Then it cycles through the points of Sprite B.
+But instead of mathing out the numbers for sprite A's transitional point x amount of times in sprites B's loops, we might as well set the values before, then loop in sprite B.
+Then we store all the returned collision points. In which case after all of this looping, we will check to see which line is the shortest. Because there may be more than 1
+collision, where 1 point lies deeper inside Sprite B, in which case we need to know which point actually matters, it works out that the shortest transitional collision is the 
+safe point. So, get in touch with me Friday, you throw me a time, I'll make it. 
+Collision is by far the most difficult task to complete.

@@ -79,6 +79,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="resourceManager.h" />
     <ClInclude Include="soil\SOIL.h" />
+    <ClInclude Include="userInterface.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Letter.rc" />
@@ -93,6 +94,7 @@
     <ClCompile Include="IOManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="resourceManager.cpp" />
+    <ClCompile Include="userInterface.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="..\lib\glew32.lib" />

@@ -8,6 +8,11 @@ double Common_Round(double num)	{
 }
 
 //OTHER SHIT
+
+float LineLength(Point P1, Point P2)	{
+	return sqrt((P2.X - P1.X) * (P2.X - P1.X) + (P2.Y - P1.Y) * (P2.Y - P1.Y));
+}
+
 bool LineIntersection(Point l1a, Point l1b, Point l2a, Point l2b, Point *iP)	{
 	//Get the line-point offsets.
 	float d1x, d1y, d2x, d2y;
@@ -20,40 +25,84 @@ bool LineIntersection(Point l1a, Point l1b, Point l2a, Point l2b, Point *iP)	{
 	t = (d2x * (l1a.Y - l2a.Y) - d2y * (l1a.X - l2a.X)) / (-d2x * d1y + d1x * d2y);
 	if (s >= 0 && s <= 1 && t >= 0 && t <= 1)	{ //Collision detected, return intersection point
 		if (iP != NULL)	{
-			iP = new Point(l1a.X + (t * d1x), l1a.Y + (t * d1y)); //Set passed in variable to the collision intersection point
+			*iP = Point(l1a.X + (t * d1x), l1a.Y + (t * d1y)); //Set passed in variable to the collision intersection point
 		}
 		return true;
 	}
 	return false;
 }
-//Idealy, we want to detect a complete collision
-//Then we see half the transition, check for collision again. If false, we know its the between 50-100% of the transition, if true, we know its 0-50%
-//This cuts the work initially in half in determining how far the transition can complete without it being a collision.
-//From here, we repeat, halfing one or the other. Until we get false, and true at +1.
-//bool PredictCollision(Sprite sA, Sprite sB, Point t, Point *sT)	{
-//	if (t.X == 0 && t.Y == 0)	{
-//		return false;
-//	}
-//	Point returnPoint;
-//	Point l1a, l1b, l2a, l2b;
-//
-//	for (size_t aI = 0; aI <= sA.Element.size(); aI++)	{ //Cycle through all sprite elements in sprite A
-//		for (size_t bI = 0; bI <= sB.Element.size(); bI++)	{ //Cycle through all sprite elements in sprite B
-//			for (size_t aEI = 0; aEI <= sA.Element[aI].Point.size(); aEI++)	{ //Cycle through all points in sprite A element [aI]
-//				for (size_t bEI = 0; bEI <= sB.Element[bI].Point.size(); bEI++)	{ //Cycle through all points in sprite B element [bI]
-//					l1a = Point(sA.Element[aI].Point[aEI].X + sA.Position.X, sA.Element[aI].Point[aEI].Y + sA.Position.Y);
-//					l1b = Point (l1a.X + t.X, l1a.Y + t.Y);
-//					/*if (LineIntersection(sA.Element[aI].Point[aEI], returnPoint)	== true)	{
-//
-//
-//					}*/
-//
-//				}
-//			}
-//		}
-//	}
-//	return false;
-//}
+
+bool PredictCollision(Sprite sA, Sprite sB, Point t, Point *rT)	{
+	if (t.X == 0 && t.Y == 0)	{
+		return false;
+	}
+	float oX = 0, oY = 0;
+	if (t.X > 0)	{oX = 0.0001f;}
+	if (t.X < 0)	{oX = -0.0001f;}
+	if (t.Y > 0)	{oY = 0.0001f;}
+	if (t.Y < 0)	{oY = -0.0001f;}
+	Point returnPoint;
+	std::vector<Point> interseptPoints;
+	Point l1a, l1b, t1a, t1b, l2a, l2b, t2a, t2b;
+	for (size_t aI = 0; aI < sA.Element.size(); aI++)	{ //Cycle through all sprite elements in sprite A
+		if (sA.Element[aI].HasCollision == true)	{ //Check if element has collision on...
+			for (size_t bI = 0; bI < sB.Element.size(); bI++)	{ //Cycle through all sprite elements in sprite B
+				if (sB.Element[bI].HasCollision == true)	{ //Check if element has collision on...
+					for (size_t aEI = 0; aEI < sA.Element[aI].Point.size(); aEI++)	{ //Cycle through all points in sprite A element [aI]
+						
+						
+						//Check if x or y is already colliding with sprite B. If so, only deal with the other axis transition. (Setting t.X or t.Y to 0)
+
+						
+						//l1 makes up a line in object 1
+						l1a = Point(sA.Element[aI].Point[aEI].X + sA.Position.X + oX, sA.Element[aI].Point[aEI].Y + sA.Position.Y + oY);
+						if (aEI == sA.Element[aI].Point.size())	{
+							l1b = Point(sA.Element[aI].Point[0].X + sA.Position.X + oX, sA.Element[aI].Point[0].Y + sA.Position.Y + oY);
+						}else	{
+							l1b = Point(sA.Element[aI].Point[aEI + 1].X + sA.Position.X + oX, sA.Element[aI].Point[aEI + 1].Y + sA.Position.Y + oY);
+						}
+						//t1 = Makes up a line from a point in object 1 and the transition of the point.
+						t1a = Point(sA.Element[aI].Point[aEI].X + sA.Position.X + oX, sA.Element[aI].Point[aEI].Y + sA.Position.Y + oY);
+						t1b = Point (t1a.X + t.X, t1a.Y + t.Y);
+						for (size_t bEI = 0; bEI < sB.Element[bI].Point.size(); bEI++)	{ //Cycle through all points in sprite B element [bI]
+							l2a = Point (sB.Element[bI].Point[bEI].X + sB.Position.X, sB.Element[bI].Point[bEI].Y + sB.Position.Y);
+							if (bEI == sB.Element[bI].Point.size())	{
+								l2b = Point (sB.Element[bI].Point[0].X + sB.Position.X, sB.Element[bI].Point[0].Y + sB.Position.Y);
+							}else	{
+								l2b = Point (sB.Element[bI].Point[bEI + 1].X + sB.Position.X, sB.Element[bI].Point[bEI + 1].Y + sB.Position.Y);
+							}
+							t2a = Point(sB.Element[bI].Point[bEI].X + sB.Position.X, sB.Element[bI].Point[bEI].Y + sB.Position.Y);
+							t2b = Point (t2a.X - t.X, t2a.Y - t.Y);
+							if (LineIntersection(t1a, t1b, l2a, l2b, &returnPoint) == true)	{
+								interseptPoints.push_back(Point (returnPoint.X - t1a.X - oX, returnPoint.Y - t1a.Y - oY));
+							}
+							if (LineIntersection(l1a, l1b, t2a, t2b, &returnPoint) == true)	{
+								interseptPoints.push_back(Point (-(returnPoint.X - t2a.X + oX), -(returnPoint.Y - t2a.Y + oY)));
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	float ShortestLength = INFINITE, tempLength;
+	int chosenLineId;
+	if (interseptPoints.size() > 0)	{
+		for (size_t i = 0; i < interseptPoints.size(); i++)	{
+			tempLength = LineLength(Point (0, 0), interseptPoints[i]);
+			if (tempLength < ShortestLength)	{
+				ShortestLength = tempLength;
+				chosenLineId = i;
+			}
+		}
+		*rT = interseptPoints[chosenLineId];
+		return true;
+	}	
+
+	return false;
+}
+
 
 
 
@@ -63,7 +112,7 @@ bool LineIntersection(Point l1a, Point l1b, Point l2a, Point l2b, Point *iP)	{
 
 
 //RENDER SPRITE INITIALIZER
-Sprite::Sprite(Point Position, float cScale, bool isNormalized) : _vC(0), Position(Position), Scale(cScale), _iN(isNormalized), PixelsPerSecond(1.0f), _collisionObjId(-1), CollisionField(_CollisionFieldObject())	{
+Sprite::Sprite(Point Position, float cScale, bool isNormalized) : _vC(0), Position(Position), Scale(cScale), _iN(isNormalized), _collisionObjId(-1), CollisionField(_CollisionFieldObject())	{
 	CollisionField.Type = SpriteType::RECT;
 	CollisionField.BottomLeft = Position;
 	CollisionField.TopRight = Position;
@@ -72,10 +121,6 @@ Sprite::~Sprite()	{
 
 }
 
-
-Point Sprite::_scaleMoveToFrame(Point p)	{
-	return Point(p.X * (float)FrameTimeElapsed * PixelsPerSecond, p.Y * (float)FrameTimeElapsed * PixelsPerSecond);
-}
 void Sprite::MoveTo(Point NewPoint)	{
 	float aXD = NewPoint.X - Position.X;
 	float aYD = NewPoint.Y - Position.Y;
@@ -89,13 +134,12 @@ void Sprite::MoveTo(Point NewPoint)	{
 	}
 	_UpdateList();
 }void Sprite::Move(Point OffsetPoint)	{
-	Point tP = _scaleMoveToFrame(OffsetPoint);
-	Position.X += tP.X;
-	CollisionField.BottomLeft.X += tP.X;
-	CollisionField.TopRight.X += tP.X;
-	Position.Y += tP.Y;
-	CollisionField.BottomLeft.Y += tP.Y;
-	CollisionField.TopRight.Y += tP.Y;
+	Position.X += OffsetPoint.X;
+	CollisionField.BottomLeft.X += OffsetPoint.X;
+	CollisionField.TopRight.X += OffsetPoint.X;
+	Position.Y += OffsetPoint.Y;
+	CollisionField.BottomLeft.Y += OffsetPoint.Y;
+	CollisionField.TopRight.Y += OffsetPoint.Y;
 	for (size_t i = 0; i < Children.size(); i++)	{
 		Children[i].Move(OffsetPoint);
 	}
@@ -223,12 +267,14 @@ void Sprite::_DrawObject(int vId)	{
 		}
 		if (Element[vId].Type == SpriteType::TEXTURE)	{
 			vD[i].Color = Color(255, 255, 255, 255);
-		}else	{
+		}else if(Element[vId].Type != SpriteType::RECT)	{
 			vD[i].Color = Element[vId].Color[i];
 		}
 	}
 	if (Element[vId].Type == SpriteType::RECT)	{
 		vD[0].Color = Element[vId].Color[0];
+		vD[1].Color = Element[vId].Color[0];
+		vD[2].Color = Element[vId].Color[1];
 		vD[3].Color = Element[vId].Color[1];
 	}else if (Element[vId].Type == SpriteType::TEXTURE)	{
 		vD[0].UV = UV(0.0f, 0.0f);
@@ -318,60 +364,6 @@ void Sprite::SetCollisionObject(int oId)	{
 	_collisionObjId = oId;
 	CollisionField.Type = Element[oId].Type;
 	_AdjustCollisionField(Element[oId].Point);
-}
-
-std::vector<Point> _PredictCollisionHelper(Sprite sA, Sprite sB, Point t)	{
-	std::vector<Point> intercept;
-	Point returnPoint;
-	Point l1a, l1b, l2a, l2b;
-	for (size_t aI = 0; aI < sA.Element.size(); aI++)	{ //Cycle through all sprite elements in sprite A
-		if (sA.Element[aI].HasCollision == true)	{ //Check if element has collision on...
-			for (size_t bI = 0; bI < sB.Element.size(); bI++)	{ //Cycle through all sprite elements in sprite B
-				if (sB.Element[bI].HasCollision == true)	{ //Check if element has collision on...
-					for (size_t aEI = 0; aEI < sA.Element[aI].Point.size(); aEI++)	{ //Cycle through all points in sprite A element [aI]
-						for (size_t bEI = 0; bEI < sB.Element[bI].Point.size(); bEI++)	{ //Cycle through all points in sprite B element [bI]
-							l1a = Point(sA.Element[aI].Point[aEI].X + sA.Position.X, sA.Element[aI].Point[aEI].Y + sA.Position.Y);
-							l1b = Point (l1a.X + t.X, l1a.Y + t.Y);
-							l2a = Point (sB.Element[bI].Point[bEI].X + sB.Position.X, sB.Element[bI].Point[bEI].Y + sB.Position.Y);
-							if (bEI == sB.Element[bI].Point.size())	{
-								l2b = Point (sB.Element[bI].Point[0].X + sB.Position.X, sB.Element[bI].Point[0].Y + sB.Position.Y);
-							}else	{
-								l2b = Point (sB.Element[bI].Point[bEI + 1].X + sB.Position.X, sB.Element[bI].Point[bEI + 1].Y + sB.Position.Y);
-							}
-							if (LineIntersection(l1a, l1b, l2a, l2b, &returnPoint)	== true)	{
-								intercept.push_back(returnPoint);
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	return intercept;
-}
-
-bool Sprite::PredictCollision(Sprite sB, Point t, Point *rT)	{
-	if (t.X == 0 && t.Y == 0)	{
-		return false;
-	}
-	Point sT = _scaleMoveToFrame(t);
-	Point returnPoint;
-	std::vector<Point> interseptPointsA;
-	std::vector<Point> interseptPointsB;
-	interseptPointsA = _PredictCollisionHelper(*this, sB, t);
-	interseptPointsB = _PredictCollisionHelper(sB, *this, Point (-t.X, -t.Y));
-	if (interseptPointsA.size() > 0)	{
-		*rT = interseptPointsA[0];
-		return true;
-	}
-	if (interseptPointsB.size() > 0)	{
-		*rT = interseptPointsB[0];
-		return true;
-	}
-
-	
-
-	return false;
 }
 
 

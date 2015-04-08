@@ -12,7 +12,6 @@
 #include <map>
 
 
-
 enum class SpriteType {LINE, TRIANGLE, RECT, TEXTURE, CIRCLE};
 
 //SPRITE CLASS
@@ -38,7 +37,7 @@ public :
 	Sprite(Point Position = Point(0, 0), float Scale = 1, bool isNormalized = false);
 	~Sprite();
 	Point Position;
-	float Scale, PixelsPerSecond;
+	float Scale;
 	Color DrawColor;
 	_CollisionFieldObject CollisionField;
 	void Move(Point OffsetPoint);
@@ -65,11 +64,10 @@ public :
 	void Update();
 	void UpdateChildren();
 	void SetCollisionObject(int ObjectId);
-	bool PredictCollision(Sprite CompareTo, Point Transition, Point *SafeTransition);
 };
 
 
-
+float LineLength(Point LinePointA, Point LinePointB);
 bool LineIntersection(Point Line1A, Point Line1B, Point Line2A, Point Line2B, Point *IntersectPoint);
 bool PredictCollision(Sprite CompareFrom, Sprite CompareTo, Point Transition, Point *SafeTransition);
 
@@ -81,7 +79,7 @@ bool PredictCollision(Sprite CompareFrom, Sprite CompareTo, Point Transition, Po
 
 
 #include "levelMap.h"
-
+#include "userInterface.h"
 
 
 #endif

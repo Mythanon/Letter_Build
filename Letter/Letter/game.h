@@ -29,7 +29,6 @@ public:
 	Game(int Level = -1);
 	
 	Sprite Player;
-//	Sprite Map;
 	LevelMap Map;
 
 	void InitLevel();
@@ -38,9 +37,11 @@ public:
 	void Step();
 
 	void Player_Jump();
-	Point Vel;
+	Point Vel; //Player current velocity
+	Point ScaleVelocityToFrameRate(Point Vel);
+	Point UnScaleVelocityToFrameRate(Point Vel);
+	float PixelsPerSecond; //This is to scale the velocity down based on how fast the frame rate is, to keep moving at the same rate/second no matter what the FPS is.
 
-	float fScale;
 	float accX, decX;
 	float maxVelX, maxVelY;
 
