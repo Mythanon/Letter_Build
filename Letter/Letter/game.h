@@ -37,16 +37,17 @@ public:
 	void Step();
 
 	void Player_Jump();
-	Point Vel; //Player current velocity
-	Point ScaleVelocityToFrameRate(Point Vel);
-	Point UnScaleVelocityToFrameRate(Point Vel);
-	float PixelsPerSecond; //This is to scale the velocity down based on how fast the frame rate is, to keep moving at the same rate/second no matter what the FPS is.
+	//Point ScaleVelocityToFrameRate(Point Vel);
+	//Point UnScaleVelocityToFrameRate(Point Vel);
+	//float PixelsPerSecond; //This is to scale the velocity down based on how fast the frame rate is, to keep moving at the same rate/second no matter what the FPS is.
+	float Gravity;
+	float Controls_XVel;
+
 
 	float accX, decX;
 	float maxVelX, maxVelY;
 
 	float jumpInitialVel;
-	float accY;
 
 };
 

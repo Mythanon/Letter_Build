@@ -1,4 +1,3 @@
-
 #include "sprite.h";
 
 
@@ -32,75 +31,114 @@ bool LineIntersection(Point l1a, Point l1b, Point l2a, Point l2b, Point *iP)	{
 	return false;
 }
 
-bool PredictCollision(Sprite sA, Sprite sB, Point t, Point *rT)	{
+bool isPointOnLine (Point p, Point lA, Point lB) {
+    Point vA = Point (lA.X - lB.X, lA.Y - lB.Y);
+    Point vB = Point (p.X - lB.X, p.Y - lB.Y);
+    float area = vA.X * vB.Y - vA.Y * vB.X;
+    if (abs (area) < 0.01f)
+        return true;
+    return false;
+}
+
+float LineAngle (Point lA, Point lB)	{
+	return atan2(lB.Y - lA.Y, lB.X - lA.X);
+}
+float RadianToDegree (float r)	{
+	return r * 180 / 3.141592f;
+}
+
+
+bool PredictCollision(Sprite sA, Sprite sB, Point t, Point *rT, float *angle)	{
 	if (t.X == 0 && t.Y == 0)	{
 		return false;
 	}
-	float oX = 0, oY = 0;
-	if (t.X > 0)	{oX = 0.0001f;}
-	if (t.X < 0)	{oX = -0.0001f;}
-	if (t.Y > 0)	{oY = 0.0001f;}
-	if (t.Y < 0)	{oY = -0.0001f;}
-	Point returnPoint;
-	std::vector<Point> interseptPoints;
-	Point l1a, l1b, t1a, t1b, l2a, l2b, t2a, t2b;
-	for (size_t aI = 0; aI < sA.Element.size(); aI++)	{ //Cycle through all sprite elements in sprite A
-		if (sA.Element[aI].HasCollision == true)	{ //Check if element has collision on...
-			for (size_t bI = 0; bI < sB.Element.size(); bI++)	{ //Cycle through all sprite elements in sprite B
-				if (sB.Element[bI].HasCollision == true)	{ //Check if element has collision on...
-					for (size_t aEI = 0; aEI < sA.Element[aI].Point.size(); aEI++)	{ //Cycle through all points in sprite A element [aI]
-						
-						
-						//Check if x or y is already colliding with sprite B. If so, only deal with the other axis transition. (Setting t.X or t.Y to 0)
 
-						
-						//l1 makes up a line in object 1
-						l1a = Point(sA.Element[aI].Point[aEI].X + sA.Position.X + oX, sA.Element[aI].Point[aEI].Y + sA.Position.Y + oY);
-						if (aEI == sA.Element[aI].Point.size())	{
-							l1b = Point(sA.Element[aI].Point[0].X + sA.Position.X + oX, sA.Element[aI].Point[0].Y + sA.Position.Y + oY);
-						}else	{
-							l1b = Point(sA.Element[aI].Point[aEI + 1].X + sA.Position.X + oX, sA.Element[aI].Point[aEI + 1].Y + sA.Position.Y + oY);
+	Point rP, tempP;
+	float sL = INFINITE, tempL, tempA;
+	Point l1a, l1b, l1t, l2a, l2b, l2t;
+	for (size_t aI = 0; aI < sA.Element.size(); aI++)	{if (sA.Element[aI].HasCollision == true)	{
+		for (size_t aEI = 0; aEI < sA.Element[aI].Point.size(); aEI++)	{
+			l1a = Point(sA.Element[aI].Point[aEI].X + sA.Position.X, sA.Element[aI].Point[aEI].Y + sA.Position.Y);
+			if (aEI == sA.Element[aI].Point.size())	{
+				l1b = Point(sA.Element[aI].Point[0].X + sA.Position.X, sA.Element[aI].Point[0].Y + sA.Position.Y);
+			}else	{
+				l1b = Point(sA.Element[aI].Point[aEI + 1].X + sA.Position.X, sA.Element[aI].Point[aEI + 1].Y + sA.Position.Y);
+			}
+			l1t = Point (l1a.X + t.X, l1a.Y + t.Y);
+
+			for (size_t bI = 0; bI < sB.Element.size(); bI++)	{if (sB.Element[bI].HasCollision == true)	{
+				for (size_t bEI = 0; bEI < sB.Element[bI].Point.size(); bEI++)	{
+					l2a = Point (sB.Element[bI].Point[bEI].X + sB.Position.X, sB.Element[bI].Point[bEI].Y + sB.Position.Y);
+					if (bEI == sB.Element[bI].Point.size())	{
+						l2b = Point (sB.Element[bI].Point[0].X + sB.Position.X, sB.Element[bI].Point[0].Y + sB.Position.Y);
+					}else	{
+						l2b = Point (sB.Element[bI].Point[bEI + 1].X + sB.Position.X, sB.Element[bI].Point[bEI + 1].Y + sB.Position.Y);
+					}
+					l2t = Point (l2a.X - t.X, l2a.Y - t.Y);
+
+
+					//Check if point in already on the line, or line is already on the point.
+					l1t = Point (l1a.X + t.X, l1a.Y + t.Y);
+					if (isPointOnLine(l2a, l2b, l1a) == true || isPointOnLine(l1a, l1b, l2a) == true)	{
+						//If angle is < 30 then forget about Y;
+						float test = RadianToDegree(LineAngle(l2a, l2b));
+						if (test >= 180.0f)		test -= 180.0f;
+						if (test <= 30)	{
+							l1t.Y = l1a.Y;
 						}
-						//t1 = Makes up a line from a point in object 1 and the transition of the point.
-						t1a = Point(sA.Element[aI].Point[aEI].X + sA.Position.X + oX, sA.Element[aI].Point[aEI].Y + sA.Position.Y + oY);
-						t1b = Point (t1a.X + t.X, t1a.Y + t.Y);
-						for (size_t bEI = 0; bEI < sB.Element[bI].Point.size(); bEI++)	{ //Cycle through all points in sprite B element [bI]
-							l2a = Point (sB.Element[bI].Point[bEI].X + sB.Position.X, sB.Element[bI].Point[bEI].Y + sB.Position.Y);
-							if (bEI == sB.Element[bI].Point.size())	{
-								l2b = Point (sB.Element[bI].Point[0].X + sB.Position.X, sB.Element[bI].Point[0].Y + sB.Position.Y);
-							}else	{
-								l2b = Point (sB.Element[bI].Point[bEI + 1].X + sB.Position.X, sB.Element[bI].Point[bEI + 1].Y + sB.Position.Y);
-							}
-							t2a = Point(sB.Element[bI].Point[bEI].X + sB.Position.X, sB.Element[bI].Point[bEI].Y + sB.Position.Y);
-							t2b = Point (t2a.X - t.X, t2a.Y - t.Y);
-							if (LineIntersection(t1a, t1b, l2a, l2b, &returnPoint) == true)	{
-								interseptPoints.push_back(Point (returnPoint.X - t1a.X - oX, returnPoint.Y - t1a.Y - oY));
-							}
-							if (LineIntersection(l1a, l1b, t2a, t2b, &returnPoint) == true)	{
-								interseptPoints.push_back(Point (-(returnPoint.X - t2a.X + oX), -(returnPoint.Y - t2a.Y + oY)));
-							}
+						std::cout << l1t.Y << std::endl;
+					}
+					if (LineIntersection(l1a, l1t, l2a, l2b, &tempP) == true)	{
+						
+						
+						tempP = Point (tempP.X - l1a.X, tempP.Y - l1a.Y);
+						tempL = LineLength(Point (0, 0), tempP);
+						if (tempL < sL)	{
+							sL = tempL;
+							rP = tempP;
+							tempA = LineAngle(l2a, l2b);// * 180 / 3.14159f;
 						}
 					}
+
+
+
+
+
+
+
+
+
+
+
+
+
 				}
-			}
+			}}
 		}
+	}}
+
+
+	if (sL != INFINITE)	{
+		*rT = rP;
+		*angle = tempA;
+		return true;
+	}
+	return false;
+}
+
+
+
+bool HandleCollision(Sprite CompareFrom, Sprite CompareTo)	{
+	Point v = CompareFrom.Velocity;
+	if (v.X == 0 && v.Y == 0)	{
+		return false; //No transformation, just exit without wasting thousands of itterations
 	}
 
-	float ShortestLength = INFINITE, tempLength;
-	int chosenLineId;
-	if (interseptPoints.size() > 0)	{
-		for (size_t i = 0; i < interseptPoints.size(); i++)	{
-			tempLength = LineLength(Point (0, 0), interseptPoints[i]);
-			if (tempLength < ShortestLength)	{
-				ShortestLength = tempLength;
-				chosenLineId = i;
-			}
-		}
-		*rT = interseptPoints[chosenLineId];
-		return true;
-	}	
 
-	return false;
+
+
+
+
 }
 
 
@@ -109,10 +147,8 @@ bool PredictCollision(Sprite sA, Sprite sB, Point t, Point *rT)	{
 
 
 
-
-
 //RENDER SPRITE INITIALIZER
-Sprite::Sprite(Point Position, float cScale, bool isNormalized) : _vC(0), Position(Position), Scale(cScale), _iN(isNormalized), _collisionObjId(-1), CollisionField(_CollisionFieldObject())	{
+Sprite::Sprite(Point Position, float cScale, bool fixed, bool isNormalized) : _vC(0), Position(Position), Weight(1.0f), Scale(cScale), Fixed(fixed), _iN(isNormalized), _collisionObjId(-1), CollisionField(_CollisionFieldObject())	{
 	CollisionField.Type = SpriteType::RECT;
 	CollisionField.BottomLeft = Position;
 	CollisionField.TopRight = Position;
@@ -162,6 +198,45 @@ void Sprite::SetColor(Color C)	{
 	}
 }
 
+Point ScaleVelocityToFrameRate(Point Vel)	{
+	return Point(Vel.X * (float)FrameTimeElapsed * PixelsPerSecond, Vel.Y * (float)FrameTimeElapsed * PixelsPerSecond);
+}Point UnScaleVelocityToFrameRate(Point Vel)	{
+	return Point(Vel.X / (float)FrameTimeElapsed / PixelsPerSecond, Vel.Y / (float)FrameTimeElapsed / PixelsPerSecond);
+}
+
+void Sprite::SetVelocity(Point v)	{
+	Velocity = ScaleVelocityToFrameRate(v);
+	for (size_t i = 0; i < Element.size(); i++)	{
+		for (size_t j = 0; j < Element[i].Point.size(); j++)	{
+			Element[i].Velocity[i] = Velocity;
+		}
+	}
+}void Sprite::SetVelocityX(float xV)	{
+	Velocity.X = ScaleVelocityToFrameRate(Point (xV, 0)).X;
+	for (size_t i = 0; i < Element.size(); i++)	{
+		for (size_t j = 0; j < Element[i].Point.size(); j++)	{
+			Element[i].Velocity[i].X = Velocity.X;
+		}
+	}
+}void Sprite::SetVelocityY(float yV)	{
+	Velocity.Y = ScaleVelocityToFrameRate(Point (0, yV)).Y;
+	for (size_t i = 0; i < Element.size(); i++)	{
+		for (size_t j = 0; j < Element[i].Point.size(); j++)	{
+			Element[i].Velocity[i].Y = Velocity.Y;
+		}
+	}
+}
+
+void Sprite::ApplyGravity(float g)	{
+	g = ScaleVelocityToFrameRate(Point (0, g * Weight)).Y;
+	Velocity = Point (Velocity.X, Velocity.Y - g);
+	for (size_t i = 0; i < Element.size(); i++)	{
+		for (size_t j = 0; j < Element[i].Point.size(); j++)	{
+			Element[i].Velocity[i] = Point (Element[i].Velocity[i].X, Element[i].Velocity[i].Y - g);
+		}
+	}
+}
+
 int Sprite::AddSprite(Point p, float s, bool iN)	{
 	Children.push_back(Sprite(Point(Position.X + p.X, Position.Y + p.Y), s, iN));
 	return Children.size() - 1;
@@ -180,6 +255,7 @@ int Sprite::AddLine(bool HasCollision, Point P1, Point P2, Color C1, Color C2)	{
 	Element[_vC].Color = std::vector<Color>(2);
 	Element[_vC].Color[0] = C1;
 	Element[_vC].Color[1] = C2;
+	Element[_vC].Velocity = std::vector<Point>(2);
 	if (_collisionObjId == -1)	{
 		_AdjustCollisionField(Element[_vC].Point);
 	}
@@ -204,6 +280,7 @@ int Sprite::AddTriangle(bool HasCollision, Point P1, Point P2, Point P3, Color C
 	Element[_vC].Color[0] = C1;
 	Element[_vC].Color[1] = C2;
 	Element[_vC].Color[2] = C3;
+	Element[_vC].Velocity = std::vector<Point>(3);
 	if (_collisionObjId == -1)	{
 		_AdjustCollisionField(Element[_vC].Point);
 	}
@@ -227,6 +304,7 @@ int Sprite::AddRect(bool HasCollision, Point P, Size S, Color C1, Color C2)	{
 	Element[_vC].Color = std::vector<Color>(2);
 	Element[_vC].Color[0] = C1;
 	Element[_vC].Color[1] = C2;
+	Element[_vC].Velocity = std::vector<Point>(4);
 	if (_collisionObjId == -1)	{
 		_AdjustCollisionField(Element[_vC].Point);
 	}
@@ -246,6 +324,7 @@ int Sprite::AddTexture(bool HasCollision, Point P, Size S, std::string TexturePa
 	Element[_vC].Point[1] = Point(P.X, P.Y + S.Height);
 	Element[_vC].Point[2] = Point (P.X + S.Width, P.Y + S.Height);
 	Element[_vC].Point[3] = Point(P.X + S.Width, P.Y);
+	Element[_vC].Velocity = std::vector<Point>(4);
 	if (_collisionObjId == -1)	{
 		_AdjustCollisionField(Element[_vC].Point);
 	}

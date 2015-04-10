@@ -1,19 +1,8 @@
-﻿Build started 08/04/2015 3:24:06 PM.
+﻿Build started 10/04/2015 11:47:48 AM.
      1>Project "C:\Github\Letter_Build\Letter\Letter\Letter.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt game.cpp global.cpp levelMap.cpp main.cpp sprite.cpp userInterface.cpp
-         sprite.cpp
-     1>c:\github\letter_build\letter\letter\sprite.cpp(2): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-     1>c:\github\letter_build\letter\letter\sprite.cpp(89): warning C4305: 'initializing' : truncation from 'unsigned int' to 'float'
-         Generating Code...
-         Compiling...
-         userInterface.cpp
-         main.cpp
-     1>c:\github\letter_build\letter\letter\main.cpp(1): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-         levelMap.cpp
-         global.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt game.cpp
          game.cpp
-         Generating Code...
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Github\Letter_Build\Letter\Debug\Letter.exe" /INCREMENTAL /NOLOGO opengl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Github\Letter_Build\Letter\Debug\Letter.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Github\Letter_Build\Letter\Debug\Letter.lib" /MACHINE:X86 Debug\Letter.res
          Debug\levelMap.obj
@@ -30,14 +19,9 @@
          ..\lib\SDL2.lib
          ..\lib\SDL2main.lib
          ..\lib\SOIL.lib
-     1>LINK : warning LNK4098: defaultlib 'MSVCRTD' conflicts with use of other libs; use /NODEFAULTLIB:library
-     1>SOIL.lib(image_DXT.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'SOIL.lib(image_DXT.obj)' or at 'C:\Github\Letter_Build\Letter\Debug\vc110.pdb'; linking object as if no debug info
-     1>SOIL.lib(image_helper.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'SOIL.lib(image_helper.obj)' or at 'C:\Github\Letter_Build\Letter\Debug\vc110.pdb'; linking object as if no debug info
-     1>SOIL.lib(SOIL.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'SOIL.lib(SOIL.obj)' or at 'C:\Github\Letter_Build\Letter\Debug\vc110.pdb'; linking object as if no debug info
-     1>SOIL.lib(stb_image_aug.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'SOIL.lib(stb_image_aug.obj)' or at 'C:\Github\Letter_Build\Letter\Debug\vc110.pdb'; linking object as if no debug info
          Letter.vcxproj -> C:\Github\Letter_Build\Letter\Debug\Letter.exe
      1>Done Building Project "C:\Github\Letter_Build\Letter\Letter\Letter.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:05.78
+Time Elapsed 00:00:01.41
